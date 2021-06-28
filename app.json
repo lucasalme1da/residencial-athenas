@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icone.png",
     "splash": {
-      "image": "./assets/Abertura.png",
+      "image": "./assets/abertura.png",
       "resizeMode": "cover"
     },
     "updates": {
