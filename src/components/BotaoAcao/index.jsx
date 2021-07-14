@@ -1,14 +1,50 @@
 import React from 'react';
-import { StyleSheet, TouchableNativeFeedback, Text, View } from 'react-native';
+import {
+  StyleSheet,
+  TouchableNativeFeedback,
+  Text,
+  View,
+  ActivityIndicator,
+} from 'react-native';
 
-const BotaoAcao = ({ titulo, onPress }) => {
+const BotaoAcao = ({
+  titulo,
+  onPress,
+  primario = false,
+  carregando = false,
+}) => {
   return (
     <TouchableNativeFeedback
       background={TouchableNativeFeedback.Ripple('#ffffff20')}
-      style={estilos.botaoContainer}
+      style={{
+        ...estilos.botaoContainer,
+      }}
       onPress={onPress}>
-      <View style={estilos.botaoContainer}>
-        <Text style={estilos.botaoTitulo}>{titulo}</Text>
+      <View
+        style={{
+          ...estilos.botaoContainer,
+          backgroundColor: primario ? '#cab272' : '#fff',
+        }}>
+        <Text
+          style={{
+            ...estilos.botaoTitulo,
+            color: primario ? '#fff' : '#cab272',
+          }}>
+          {carregando ? (
+            <View style={estilos.botaoTitulo}>
+              <Text
+                style={{
+                  ...estilos.botaoTitulo,
+                  color: primario ? '#fff' : '#cab272',
+                }}>
+                Carregando...
+              </Text>
+              <ActivityIndicator color={primario ? '#fff' : '#cab272'} />
+            </View>
+          ) : (
+            titulo
+          )}
+        </Text>
       </View>
     </TouchableNativeFeedback>
   );
@@ -20,7 +56,7 @@ const estilos = StyleSheet.create({
     maxWidth: 340,
     minWidth: 'auto',
     height: 48,
-    backgroundColor: '#cab272',
+
     borderRadius: 8,
     paddingLeft: 16,
     marginBottom: 20,
@@ -29,8 +65,11 @@ const estilos = StyleSheet.create({
   },
 
   botaoTitulo: {
-    color: '#fff',
+    fontFamily: 'Ubuntu_400Regular',
     fontSize: 18,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

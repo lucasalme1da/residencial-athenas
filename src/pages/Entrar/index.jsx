@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Dimensions,
@@ -12,6 +12,9 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
+import { fazerLogin } from '../../actions';
+import { useDispatch } from 'react-redux';
+
 import CampoTexto from '../../components/CampoTexto';
 import BotaoAcao from '../../components/BotaoAcao';
 import CampoSenha from '../../components/CampoSenha';
@@ -22,15 +25,26 @@ const Logo = require('../../../assets/logotipo-texto.png');
 const Fundo = require('../../../assets/logotipo.png');
 
 import { mudaValor } from '../../utils';
+import { mostrarErroPeloCodigo } from '../../utils/errorHandler';
 
-const Entrar = () => {
+const Entrar = ({ navigation }) => {
+  const dispatch = useDispatch();
+
   const [login, setLogin] = useState({
     email: '',
     senha: '',
+    carregando: false,
   });
 
-  const mudarValor = (valor) => {
-    setLogin();
+  const handleAuth = () => {
+    const { email, senha } = login;
+    setLogin((state) => ({ ...state, carregando: true }));
+    dispatch(fazerLogin(email, senha))
+      .then((res) => Alert.alert('Login bem-sucedido!', res))
+      .catch((err) =>
+        Alert.alert('Erro no login', mostrarErroPeloCodigo(err.code)),
+      )
+      .then(() => setLogin((state) => ({ ...state, carregando: false })));
   };
 
   return (
@@ -47,6 +61,8 @@ const Entrar = () => {
           <CampoTexto
             placeholder={'Email'}
             value={login.email}
+            keyboardType="email-address"
+            autoCapitalize="none"
             onChangeText={(valor) => mudaValor('email', valor, setLogin)}
           />
           <CampoSenha
@@ -55,16 +71,13 @@ const Entrar = () => {
             onChangeText={(valor) => mudaValor('senha', valor, setLogin)}
           />
           <BotaoAcao
+            primario={true}
             titulo="Entrar"
-            onPress={() =>
-              Alert.alert(
-                'Login',
-                `Você está tentando fazer login com o email "${login.email}" e a senha "${login.senha}"`,
-              )
-            }
+            onPress={handleAuth}
+            carregando={login.carregando}
           />
           <View style={estilos.rodapeContainer}>
-            <TouchableOpacity onPress={() => Alert.alert('Cadastro')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
               <Text style={estilos.rodapePrimario}>Ainda não tem conta?</Text>
               <Text style={estilos.rodapeSecundario}>Cadastre-se!</Text>
             </TouchableOpacity>

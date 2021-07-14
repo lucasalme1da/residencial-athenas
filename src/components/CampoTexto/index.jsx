@@ -1,14 +1,19 @@
 import React from 'react';
-import { StyleSheet, TextInput } from 'react-native';
+import { StyleSheet, TextInput, Text } from 'react-native';
 
-const CampoTexto = ({ onChangeText, value, placeholder }) => {
+const CampoTexto = ({ onChangeText, value, placeholder, rotulo, ...rest }) => {
   return (
-    <TextInput
-      style={estilos.campo}
-      onChangeText={onChangeText}
-      value={value}
-      placeholder={placeholder}
-    />
+    <>
+      {rotulo && <Text style={estilos.rotulo}>{rotulo}</Text>}
+      <TextInput
+        style={estilos.campo}
+        onChangeText={onChangeText}
+        value={value}
+        placeholder={placeholder}
+        placeholderTextColor="#95835370"
+        {...rest}
+      />
+    </>
   );
 };
 
@@ -22,6 +27,11 @@ const estilos = StyleSheet.create({
     paddingLeft: 16,
     color: '#7a6428',
     marginBottom: 20,
+  },
+  rotulo: {
+    fontFamily: 'Ubuntu_400Regular',
+    color: '#7A6428',
+    marginBottom: 8,
   },
 });
 
