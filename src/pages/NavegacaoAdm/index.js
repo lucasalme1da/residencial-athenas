@@ -2,13 +2,13 @@ import React from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { Text } from 'react-native';
 
-import Inicio from '../Inicio';
-import Reservas from '../Reservas';
-import Conta from '../Conta';
+import InicioAdm from '../InicioAdm';
+import ReservasAdm from '../ReservasAdm';
+import ContaAdm from '../ContaAdm';
 
 const Tab = createMaterialBottomTabNavigator();
 
-const BottomNavigation = () => {
+const NavegacaoAdm = () => {
   return (
     <Tab.Navigator
       barStyle={{
@@ -23,8 +23,8 @@ const BottomNavigation = () => {
       backBehavior="firstRoute"
       sceneAnimationEnabled={false}>
       <Tab.Screen
-        name="Inicio"
-        component={Inicio}
+        name="InicioAdm"
+        component={InicioAdm}
         options={{
           tabBarIcon: 'home',
           tabBarLabel: (
@@ -35,8 +35,8 @@ const BottomNavigation = () => {
         }}
       />
       <Tab.Screen
-        name="Reservas"
-        component={Reservas}
+        name="ReservasAdm"
+        component={ReservasAdm}
         options={{
           tabBarIcon: 'calendar-check-outline',
           tabBarLabel: (
@@ -47,8 +47,8 @@ const BottomNavigation = () => {
         }}
       />
       <Tab.Screen
-        name="Conta"
-        component={Conta}
+        name="ContaAdm"
+        component={ContaAdm}
         options={{
           tabBarIcon: 'account-circle-outline',
           tabBarLabel: (
@@ -62,4 +62,4 @@ const BottomNavigation = () => {
   );
 };
 
-export default BottomNavigation;
+export default NavegacaoAdm;

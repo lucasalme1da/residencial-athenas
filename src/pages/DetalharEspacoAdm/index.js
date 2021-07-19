@@ -21,7 +21,7 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 const ReservaCriada = require('../../../assets/reserva_criada.png');
 const Fundo = require('../../../assets/logotipo.png');
 
-const DetalharEspaco = ({ props }) => {
+const DetalharEspacoAdm = ({ props }) => {
   const [espaco, setEspaco] = useState({
     id: 'sadfdioafa',
     tipo: 'Chalé Completo',
@@ -191,7 +191,8 @@ const DetalharEspaco = ({ props }) => {
               {espaco.descricaoFuncionamento}
             </Text>
 
-            <BotaoAcao titulo="Reservar" onPress={abrirModal} primario />
+            <BotaoAcao titulo="Editar" onPress={abrirModal} primario />
+            <BotaoAcao titulo="Remover" onPress={() => {}} />
           </ScrollView>
           <Modal modalRef={modalRef} altura={450}>
             {renderizarModal()}
@@ -398,4 +399,4 @@ const estilos = StyleSheet.create({
   },
 });
 
-export default DetalharEspaco;
+export default DetalharEspacoAdm;

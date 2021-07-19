@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View, Button } from 'react-native';
-import CampoTexto from '../CampoTexto';
+
 export default function Landing({ navigation }) {
   return (
     <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -13,12 +13,12 @@ export default function Landing({ navigation }) {
         onPress={() => navigation.navigate('Cadastro')}
       />
       <Button
-        title="BottomNavigation"
-        onPress={() => navigation.navigate('BottomNavigation')}
+        title="NavegacaoMorador"
+        onPress={() => navigation.navigate('NavegacaoMorador')}
       />
       <Button
-        title="Reservas"
-        onPress={() => navigation.navigate('Reservas')}
+        title="NavegacaoAdm"
+        onPress={() => navigation.navigate('NavegacaoAdm')}
       />
     </View>
   );

@@ -1,7 +1,11 @@
 export { default as Entrar } from './Entrar';
 export { default as Cadastro } from './Cadastro';
-export { default as BottomNavigation } from './BottomNavigation';
+export { default as NavegacaoMorador } from './NavegacaoMorador';
+export { default as NavegacaoAdm } from './NavegacaoAdm';
 export { default as Inicio } from './Inicio';
 export { default as Reservas } from './Reservas';
 export { default as Procurar } from './Procurar';
 export { default as DetalharEspaco } from './DetalharEspaco';
+export { default as DetalharEspacoAdm } from './DetalharEspacoAdm';
+export { default as ListarEspacoAdm } from './ListarEspacoAdm';
+export { default as AdicionarEspacoAdm } from './AdicionarEspacoAdm';

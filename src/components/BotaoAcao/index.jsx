@@ -10,6 +10,7 @@ import {
 const BotaoAcao = ({
   titulo,
   onPress,
+  style,
   primario = false,
   carregando = false,
   ...rest
@@ -24,6 +25,7 @@ const BotaoAcao = ({
       <View
         style={{
           ...estilos.botaoContainer,
+          ...style,
           backgroundColor: primario ? '#cab272' : '#F3F1EC',
         }}>
         <View style={estilos.botaoTitulo}>

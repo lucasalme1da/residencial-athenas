@@ -9,10 +9,14 @@ import {
   Entrar,
   Cadastro,
   Inicio,
-  BottomNavigation,
+  NavegacaoMorador,
+  NavegacaoAdm,
   Reservas,
   Procurar,
+  ListarEspacoAdm,
+  AdicionarEspacoAdm,
   DetalharEspaco,
+  DetalharEspacoAdm,
 } from './pages/index';
 
 import { firebaseConfig } from './config/firebase';
@@ -83,8 +87,15 @@ export default function Router() {
           }}
         />
         <Stack.Screen
-          name="BottomNavigation"
-          component={BottomNavigation}
+          name="NavegacaoMorador"
+          component={NavegacaoMorador}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="NavegacaoAdm"
+          component={NavegacaoAdm}
           options={{
             headerShown: false,
           }}
@@ -95,8 +106,26 @@ export default function Router() {
           options={{ ...headerOptions, title: 'Procurar' }}
         />
         <Stack.Screen
+          name="ListarEspacoAdm"
+          component={ListarEspacoAdm}
+          options={{ ...headerOptions, title: 'Espaços' }}
+        />
+        <Stack.Screen
+          name="AdicionarEspacoAdm"
+          component={AdicionarEspacoAdm}
+          options={{ ...headerOptions, title: 'Adicionar espaço' }}
+        />
+        <Stack.Screen
           name="DetalharEspaco"
           component={DetalharEspaco}
+          options={({ route }) => ({
+            ...headerOptions,
+            title: route.params.espacoTitulo,
+          })}
+        />
+        <Stack.Screen
+          name="DetalharEspacoAdm"
+          component={DetalharEspacoAdm}
           options={({ route }) => ({
             ...headerOptions,
             title: route.params.espacoTitulo,

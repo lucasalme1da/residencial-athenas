@@ -1,17 +1,23 @@
 import React from 'react';
 import { StyleSheet, TextInput, Text } from 'react-native';
 
-const CampoTexto = ({ onChangeText, value, placeholder, rotulo, ...rest }) => {
+const CampoTexto = ({
+  onChangeText,
+  value,
+  placeholder,
+  rotulo,
+  style,
+  ...rest
+}) => {
   return (
     <>
       {rotulo && <Text style={estilos.rotulo}>{rotulo}</Text>}
       <TextInput
-        style={estilos.campo}
+        style={{ ...estilos.campo, ...style }}
         onChangeText={onChangeText}
         value={value}
         placeholder={placeholder}
         placeholderTextColor="#95835370"
-        {...rest}
       />
     </>
   );

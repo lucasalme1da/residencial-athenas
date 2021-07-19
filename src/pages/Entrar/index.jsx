@@ -40,11 +40,17 @@ const Entrar = ({ navigation }) => {
     const { email, senha } = login;
     setLogin((state) => ({ ...state, carregando: true }));
     dispatch(fazerLogin(email, senha))
-      .then(() => navigation.navigate('BottomNavigation'))
+      .then(() => navigation.navigate('NavegacaoMorador'))
       .catch((err) =>
         Alert.alert('Erro no login', mostrarErroPeloCodigo(err.code)),
       )
-      .then(() => setLogin((state) => ({ ...state, carregando: false })));
+      .then(() =>
+        setLogin((state) => ({
+          email: '',
+          senha: '',
+          carregando: false,
+        })),
+      );
   };
 
   return (
