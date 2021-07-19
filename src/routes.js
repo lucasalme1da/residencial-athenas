@@ -5,7 +5,15 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import { Landing } from './components/index';
-import { Entrar, Cadastro } from './pages/index';
+import {
+  Entrar,
+  Cadastro,
+  Inicio,
+  BottomNavigation,
+  Reservas,
+  Procurar,
+  DetalharEspaco,
+} from './pages/index';
 
 import { firebaseConfig } from './config/firebase';
 
@@ -19,8 +27,11 @@ import {
 
 const Stack = createStackNavigator();
 
-firebase.initializeApp(firebaseConfig);
-
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+} else {
+  firebase.app(); // if already initialized, use that one
+}
 export default function Router() {
   let [fontsLoaded] = useFonts({
     Ubuntu_300Light,
@@ -32,6 +43,20 @@ export default function Router() {
   if (!fontsLoaded) {
     return <AppLoading />;
   }
+
+  const headerOptions = {
+    headerTintColor: '#7a6428',
+    headerTitleStyle: {
+      width: '100%',
+      fontSize: 18,
+      fontFamily: 'Ubuntu_500Medium',
+      textAlign: 'center',
+      maxWidth: 270,
+      color: '#7a6428',
+    },
+    headerTitleAlign: 'center',
+    headerTransparent: true,
+  };
 
   return (
     <NavigationContainer>
@@ -56,6 +81,26 @@ export default function Router() {
           options={{
             headerShown: false,
           }}
+        />
+        <Stack.Screen
+          name="BottomNavigation"
+          component={BottomNavigation}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Procurar"
+          component={Procurar}
+          options={{ ...headerOptions, title: 'Procurar' }}
+        />
+        <Stack.Screen
+          name="DetalharEspaco"
+          component={DetalharEspaco}
+          options={({ route }) => ({
+            ...headerOptions,
+            title: route.params.espacoTitulo,
+          })}
         />
       </Stack.Navigator>
     </NavigationContainer>

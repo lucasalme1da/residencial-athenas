@@ -46,7 +46,7 @@ const Cadastro = ({ navigation }) => {
   ]);
   const dispatch = useDispatch();
 
-  const novoUsuario = useSelector((state) => state.novoUsuario);
+  const novoUsuario = useSelector((state) => state.usuario);
 
   const mudaValor = (campo, valor) => {
     dispatch(setNovoUsuario(campo, valor));
@@ -204,7 +204,7 @@ const Cadastro = ({ navigation }) => {
               <BotaoAcao
                 primario
                 titulo="Continuar"
-                onPress={() => dispatch(cadastrarNovoUsuario(novoUsuario))}
+                onPress={() => dispatch(fazerCadastro(novoUsuario))}
               />
               <BotaoAcao titulo="Voltar" onPress={() => setPasso(1)} />
             </View>

@@ -40,7 +40,7 @@ const Entrar = ({ navigation }) => {
     const { email, senha } = login;
     setLogin((state) => ({ ...state, carregando: true }));
     dispatch(fazerLogin(email, senha))
-      .then((res) => Alert.alert('Login bem-sucedido!', res))
+      .then(() => navigation.navigate('BottomNavigation'))
       .catch((err) =>
         Alert.alert('Erro no login', mostrarErroPeloCodigo(err.code)),
       )

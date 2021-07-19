@@ -1,6 +1,8 @@
 import React from 'react';
 import Router from './src/routes';
 
+import { Provider as PaperProvider } from 'react-native-paper';
+
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import reduxThunk from 'redux-thunk';
@@ -16,7 +18,9 @@ const store = createStore(
 
 const App = (props) => (
   <Provider store={store}>
-    <Router />
+    <PaperProvider>
+      <Router />
+    </PaperProvider>
   </Provider>
 );
 

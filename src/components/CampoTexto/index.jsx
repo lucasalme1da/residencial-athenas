@@ -19,6 +19,7 @@ const CampoTexto = ({ onChangeText, value, placeholder, rotulo, ...rest }) => {
 
 const estilos = StyleSheet.create({
   campo: {
+    fontFamily: 'Ubuntu_400Regular',
     maxWidth: 340,
     minWidth: 'auto',
     height: 48,

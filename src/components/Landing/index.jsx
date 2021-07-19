@@ -12,6 +12,14 @@ export default function Landing({ navigation }) {
         title="Cadastro"
         onPress={() => navigation.navigate('Cadastro')}
       />
+      <Button
+        title="BottomNavigation"
+        onPress={() => navigation.navigate('BottomNavigation')}
+      />
+      <Button
+        title="Reservas"
+        onPress={() => navigation.navigate('Reservas')}
+      />
     </View>
   );
 }

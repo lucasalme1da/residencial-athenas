@@ -12,6 +12,7 @@ const BotaoAcao = ({
   onPress,
   primario = false,
   carregando = false,
+  ...rest
 }) => {
   return (
     <TouchableNativeFeedback
@@ -23,18 +24,17 @@ const BotaoAcao = ({
       <View
         style={{
           ...estilos.botaoContainer,
-          backgroundColor: primario ? '#cab272' : '#fff',
+          backgroundColor: primario ? '#cab272' : '#F3F1EC',
         }}>
-        <Text
-          style={{
-            ...estilos.botaoTitulo,
-            color: primario ? '#fff' : '#cab272',
-          }}>
+        <View style={estilos.botaoTitulo}>
           {carregando ? (
-            <View style={estilos.botaoTitulo}>
+            <View
+              style={{
+                flexDirection: 'row',
+              }}>
               <Text
                 style={{
-                  ...estilos.botaoTitulo,
+                  ...estilos.titulo,
                   color: primario ? '#fff' : '#cab272',
                 }}>
                 Carregando...
@@ -42,9 +42,15 @@ const BotaoAcao = ({
               <ActivityIndicator color={primario ? '#fff' : '#cab272'} />
             </View>
           ) : (
-            titulo
+            <Text
+              style={{
+                ...estilos.titulo,
+                color: primario ? '#fff' : '#cab272',
+              }}>
+              {titulo}
+            </Text>
           )}
-        </Text>
+        </View>
       </View>
     </TouchableNativeFeedback>
   );
@@ -58,18 +64,22 @@ const estilos = StyleSheet.create({
     height: 48,
 
     borderRadius: 8,
-    paddingLeft: 16,
-    marginBottom: 20,
+    marginTop: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   botaoTitulo: {
-    fontFamily: 'Ubuntu_400Regular',
-    fontSize: 18,
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  titulo: {
+    fontFamily: 'Ubuntu_400Regular',
+    fontSize: 18,
+    textAlign: 'center',
   },
 });
 
