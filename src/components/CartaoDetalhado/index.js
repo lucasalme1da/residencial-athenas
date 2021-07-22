@@ -15,12 +15,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from 'react-native-vector-icons';
 
 const CartaoDetalhado = ({ detalhar, espaco }) => {
+  const organizarPalavrasChave = () =>
+    espaco.palavrasChave.slice(0, 3).join(', ') + ' e mais.';
+
   return (
     <TouchableOpacity
       activeOpacity={0.95}
       onPress={() => detalhar(espaco)}
       style={estilos.cartaoContainer}>
-      <Image source={{ uri: espaco.imagem }} style={estilos.imagem} />
+      <Image source={{ uri: espaco.fotos[0] }} style={estilos.imagem} />
       <LinearGradient
         colors={['transparent', 'transparent', 'transparent', '#F9F7F3']}
         style={estilos.gradiente}></LinearGradient>
@@ -29,8 +32,8 @@ const CartaoDetalhado = ({ detalhar, espaco }) => {
           <View style={estilos.tagContainer}>
             <Text style={estilos.tag}>{espaco.tipo}</Text>
           </View>
-          <Text style={estilos.titulo}>{espaco.titulo}</Text>
-          <Text style={estilos.descricao}>{espaco.descricaoBreve}</Text>
+          <Text style={estilos.titulo}>{espaco.nome}</Text>
+          <Text style={estilos.descricao}>{organizarPalavrasChave()}</Text>
         </View>
         <View style={estilos.capacidadeContainer}>
           <MaterialCommunityIcons
@@ -63,7 +66,7 @@ const estilos = StyleSheet.create({
 
   gradiente: {
     width: screenWidth - 70,
-    height: 250,
+    height: 230,
     padding: 15,
     alignItems: 'center',
     borderTopLeftRadius: 12,
@@ -74,7 +77,7 @@ const estilos = StyleSheet.create({
 
   imagem: {
     width: screenWidth - 70,
-    height: 250,
+    height: 230,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
   },
@@ -90,6 +93,7 @@ const estilos = StyleSheet.create({
 
   tituloContainer: {
     width: (screenWidth - 70) * 0.7,
+    height: 110,
     padding: 12,
   },
 
@@ -107,6 +111,7 @@ const estilos = StyleSheet.create({
 
   capacidadeContainer: {
     width: (screenWidth - 70) * 0.3,
+    height: 110,
     padding: 12,
     alignItems: 'center',
     justifyContent: 'center',

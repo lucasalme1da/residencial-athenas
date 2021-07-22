@@ -27,12 +27,12 @@ const DetalharEspaco = ({ props }) => {
     tipo: 'Chalé Completo',
     nome: 'Chalé Olympus',
     capacidade: 30,
-    maisSobre:
+    descricao:
       'Um chalé aconchegante, com tudo o que você precisa para ter uma experiência diferente aqui no Athenas. Ideal para festas sociais, aniversários, reuniões de empresa ou outros eventos relacionados.',
     recursos:
       'Cozinha ampla, 2 Wcs, sala de estar com projetor, ar condicionado e aquecedor.',
-    descricaoFuncionamento: '24 horas por dia, 7 dias por semana',
-    imagens: [
+    funcionamento: '24 horas por dia, 7 dias por semana',
+    fotos: [
       'https://media-cdn.tripadvisor.com/media/photo-s/06/ff/da/e8/chales-pedra-do-bau.jpg',
       'https://media-cdn.tripadvisor.com/media/photo-s/02/24/d4/9b/grunwald-chales.jpg',
       'https://a0.muscache.com/im/pictures/6173899e-8b40-448d-8222-1925a54c9960.jpg?im_w=720',
@@ -60,7 +60,7 @@ const DetalharEspaco = ({ props }) => {
   const pagination = () => {
     return (
       <Pagination
-        dotsLength={espaco.imagens.length}
+        dotsLength={espaco.fotos.length}
         activeDotIndex={paginaAtual}
         dotStyle={estilos.paginacao}
         inactiveDotStyle={{
@@ -148,7 +148,7 @@ const DetalharEspaco = ({ props }) => {
           <ScrollView style={estilos.espacosContainer}>
             <View style={estilos.carousel}>
               <Carousel
-                data={espaco.imagens}
+                data={espaco.fotos}
                 renderItem={({ item: imagem }) => {
                   return (
                     <Image source={{ uri: imagem }} style={estilos.imagem} />
@@ -180,16 +180,14 @@ const DetalharEspaco = ({ props }) => {
               </View>
             </View>
             <Text style={estilos.listaTitulo}> • Mais sobre o local</Text>
-            <Text style={estilos.listaDescricao}>{espaco.maisSobre}</Text>
+            <Text style={estilos.listaDescricao}>{espaco.descricao}</Text>
             <Text style={estilos.listaTitulo}> • Recursos oferecidos</Text>
             <Text style={estilos.listaDescricao}>{espaco.recursos}</Text>
             <Text style={estilos.listaTitulo}>
               {' '}
               • Descricao sobre funcionamento
             </Text>
-            <Text style={estilos.listaDescricao}>
-              {espaco.descricaoFuncionamento}
-            </Text>
+            <Text style={estilos.listaDescricao}>{espaco.funcionamento}</Text>
 
             <BotaoAcao titulo="Reservar" onPress={abrirModal} primario />
           </ScrollView>

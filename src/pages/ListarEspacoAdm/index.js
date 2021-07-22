@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Dimensions,
@@ -7,19 +7,15 @@ import {
   StyleSheet,
   View,
   Text,
-  TouchableOpacity,
-  KeyboardAvoidingView,
   ScrollView,
-  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 
-import {
-  Modal,
-  BotaoAcao,
-  CampoTexto,
-  CartaoDetalhado,
-} from '../../components';
+import { CartaoDetalhado } from '../../components';
+import { useDispatch, useSelector } from 'react-redux';
+import { listarEspacos } from '../../actions/espacosActions';
+import { selecionarEspaco } from '../../actions/espacoAtualActions';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
@@ -27,71 +23,71 @@ const NenhumResultado = require('../../../assets/nenhum_resultado.png');
 const Fundo = require('../../../assets/logotipo.png');
 
 const ListarEspacoAdm = ({ navigation }) => {
-  const [espacos, setEspacos] = useState([
-    {
-      id: 'asd09a7sd07y',
-      tipo: 'Chalé Completo',
-      titulo: 'Chalé Olympus',
-      descricaoBreve: 'Cozinha, 2 WCs, Sala e mais',
-      capacidade: 30,
-      imagem:
-        'https://chaledemadeira.com/wp-content/uploads/2020/08/chal%C3%A9-por-dentro-2-1024x732.jpg',
-    },
-    {
-      id: 'dsafq331fads',
-      tipo: 'Chalé Completo',
-      titulo: 'Chalé Olympus',
-      descricaoBreve: 'Cozinha, 2 WCs, Sala e mais',
-      capacidade: 30,
-      imagem:
-        'https://chaledemadeira.com/wp-content/uploads/2020/08/chal%C3%A9-por-dentro-2-1024x732.jpg',
-    },
-    {
-      id: '12a3sd654vca',
-      tipo: 'Chalé Completo',
-      titulo: 'Chalé Olympus',
-      descricaoBreve: 'Cozinha, 2 WCs, Sala e mais',
-      capacidade: 30,
-      imagem:
-        'https://chaledemadeira.com/wp-content/uploads/2020/08/chal%C3%A9-por-dentro-2-1024x732.jpg',
-    },
-  ]);
+  const dispatch = useDispatch();
+  const [carregando, setCarregando] = useState(true);
+
+  const espacos = useSelector((state) => state.espacos);
 
   const [resultado, setResultado] = useState([]);
+
+  const carregarListaDeEspacos = async () => {
+    setCarregando(true);
+    await dispatch(listarEspacos());
+    setCarregando(false);
+  };
+
+  useEffect(() => {
+    carregarListaDeEspacos();
+  }, []);
 
   return (
     <View style={{ flex: 1 }} behavior="position">
       <View style={estilos.fundoContainer}>
         <Image source={Fundo} style={estilos.fundoImagem} blurRadius={2} />
         <View style={estilos.conteudo}>
-          <Text style={estilos.descricao}>
-            {espacos.length} espaço(s) cadastrado(s)
-          </Text>
-          {true ? (
-            <ScrollView style={estilos.espacosContainer}>
-              {espacos.map((espaco) => (
-                <CartaoDetalhado
-                  key={espaco.id}
-                  espaco={espaco}
-                  detalhar={(e) =>
-                    navigation.navigate('DetalharEspacoAdm', {
-                      espacoId: e.id,
-                      espacoTitulo: e.titulo,
-                    })
-                  }
-                />
-              ))}
-            </ScrollView>
-          ) : (
-            <View style={estilos.nenhumResultadoContainer}>
-              <Image
-                source={NenhumResultado}
-                style={estilos.nenhumResultadoImagem}
-              />
-              <Text style={estilos.nenhumResultadoTexto}>
-                Nenhum resultado com esse nome :(
-              </Text>
+          {carregando ? (
+            <View
+              style={{
+                flex: 1,
+                paddingBottom: 50,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <ActivityIndicator size={48} color="#CAB272" />
             </View>
+          ) : (
+            <>
+              <Text style={estilos.descricao}>
+                {espacos.length} espaço(s) cadastrado(s)
+              </Text>
+              {true ? (
+                <ScrollView style={estilos.espacosContainer}>
+                  {espacos.map((espaco) => (
+                    <CartaoDetalhado
+                      key={espaco.id}
+                      espaco={espaco}
+                      detalhar={(e) => {
+                        dispatch(selecionarEspaco(e));
+                        return navigation.navigate('DetalharEspacoAdm', {
+                          espacoId: e.id,
+                          espacoNome: e.nome,
+                        });
+                      }}
+                    />
+                  ))}
+                </ScrollView>
+              ) : (
+                <View style={estilos.nenhumResultadoContainer}>
+                  <Image
+                    source={NenhumResultado}
+                    style={estilos.nenhumResultadoImagem}
+                  />
+                  <Text style={estilos.nenhumResultadoTexto}>
+                    Nenhum resultado com esse nome :(
+                  </Text>
+                </View>
+              )}
+            </>
           )}
         </View>
       </View>
@@ -140,7 +136,7 @@ const estilos = StyleSheet.create({
     alignItems: 'center',
   },
 
-  titulo: {
+  nome: {
     fontSize: 18,
     fontFamily: 'Ubuntu_500Medium',
     textAlign: 'center',

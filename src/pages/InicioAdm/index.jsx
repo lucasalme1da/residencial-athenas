@@ -8,6 +8,8 @@ import {
   Text,
   KeyboardAvoidingView,
   TouchableOpacity,
+  Alert,
+  BackHandler,
 } from 'react-native';
 
 import { CartaoResumido } from '../../components/';
@@ -52,6 +54,31 @@ const InicioAdm = ({ navigation }) => {
       />
     );
   };
+
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     Alert.alert(
+  //       'Saindo do App',
+  //       'Tem certeza que deseja encerrar sua sessão?',
+  //       [
+  //         {
+  //           text: 'Cancelar',
+  //           onPress: () => null,
+  //           style: 'cancel',
+  //         },
+  //         { text: 'Sair', onPress: () => BackHandler.exitApp() },
+  //       ],
+  //     );
+  //     return true;
+  //   };
+
+  //   const backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     backAction,
+  //   );
+
+  //   return () => backHandler.remove();
+  // }, []);
 
   return (
     <KeyboardAvoidingView style={estilos.fundoContainer} behavior="position">

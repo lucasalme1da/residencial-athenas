@@ -18,6 +18,7 @@ const CampoTexto = ({
         value={value}
         placeholder={placeholder}
         placeholderTextColor="#95835370"
+        multiline
       />
     </>
   );
@@ -34,6 +35,9 @@ const estilos = StyleSheet.create({
     paddingLeft: 16,
     color: '#7a6428',
     marginBottom: 20,
+    flex: 1,
+    flexWrap: 'wrap',
+    flexDirection: 'row',
   },
   rotulo: {
     fontFamily: 'Ubuntu_400Regular',

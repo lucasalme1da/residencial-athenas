@@ -10,10 +10,14 @@ import {
   TouchableOpacity,
   Alert,
   KeyboardAvoidingView,
+  Keyboard,
+  BackHandler,
+  ActivityIndicator,
 } from 'react-native';
 
-import { fazerLogin } from '../../actions';
-import { useDispatch } from 'react-redux';
+import firebase from 'firebase';
+import { fazerLogin, usuarioAutenticado } from '../../actions';
+import { useDispatch, useSelector } from 'react-redux';
 
 import CampoTexto from '../../components/CampoTexto';
 import BotaoAcao from '../../components/BotaoAcao';
@@ -29,6 +33,7 @@ import { mostrarErroPeloCodigo } from '../../utils/errorHandler';
 
 const Entrar = ({ navigation }) => {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
 
   const [login, setLogin] = useState({
     email: '',
@@ -38,9 +43,21 @@ const Entrar = ({ navigation }) => {
 
   const handleAuth = () => {
     const { email, senha } = login;
+    Keyboard.dismiss();
     setLogin((state) => ({ ...state, carregando: true }));
     dispatch(fazerLogin(email, senha))
-      .then(() => navigation.navigate('NavegacaoMorador'))
+      .then((tipo) => {
+        switch (tipo) {
+          case 'usuario':
+            navigation.reset({ routes: [{ name: 'NavegacaoMorador' }] });
+            break;
+          case 'admin':
+            navigation.reset({ routes: [{ name: 'NavegacaoAdm' }] });
+            break;
+          default:
+            navigation.reset({ routes: [{ name: 'Entrar' }] });
+        }
+      })
       .catch((err) =>
         Alert.alert('Erro no login', mostrarErroPeloCodigo(err.code)),
       )
@@ -53,6 +70,50 @@ const Entrar = ({ navigation }) => {
       );
   };
 
+  const verificarUsuarioLogado = async () => {
+    await dispatch(usuarioAutenticado())
+      .then((tipo) => {
+        switch (tipo) {
+          case 'usuario':
+            navigation.reset({ routes: [{ name: 'NavegacaoMorador' }] });
+            break;
+          case 'admin':
+            navigation.reset({ routes: [{ name: 'NavegacaoAdm' }] });
+            break;
+          default:
+            navigation.reset({ routes: [{ name: 'Entrar' }] });
+        }
+      })
+      .catch(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    verificarUsuarioLogado();
+
+    const backAction = () => {
+      Alert.alert(
+        'Saindo do App',
+        'Tem certeza que deseja encerrar sua sessão?',
+        [
+          {
+            text: 'Cancelar',
+            onPress: () => null,
+            style: 'cancel',
+          },
+          { text: 'Sair', onPress: () => BackHandler.exitApp() },
+        ],
+      );
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">
       <View style={estilos.fundoContainer}>
@@ -64,30 +125,47 @@ const Entrar = ({ navigation }) => {
           </Text>
         </View>
         <View style={estilos.conteudo}>
-          <CampoTexto
-            placeholder={'Email'}
-            value={login.email}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            onChangeText={(valor) => mudaValor('email', valor, setLogin)}
-          />
-          <CampoSenha
-            placeholder={'••••••••'}
-            value={login.senha}
-            onChangeText={(valor) => mudaValor('senha', valor, setLogin)}
-          />
-          <BotaoAcao
-            primario={true}
-            titulo="Entrar"
-            onPress={handleAuth}
-            carregando={login.carregando}
-          />
-          <View style={estilos.rodapeContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
-              <Text style={estilos.rodapePrimario}>Ainda não tem conta?</Text>
-              <Text style={estilos.rodapeSecundario}>Cadastre-se!</Text>
-            </TouchableOpacity>
-          </View>
+          {loading ? (
+            <View
+              style={{
+                flex: 1,
+                paddingBottom: 50,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <ActivityIndicator size={48} color="#CAB272" />
+            </View>
+          ) : (
+            <>
+              <CampoTexto
+                placeholder={'Email'}
+                value={login.email}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onChangeText={(valor) => mudaValor('email', valor, setLogin)}
+              />
+              <CampoSenha
+                placeholder={'••••••••'}
+                value={login.senha}
+                onChangeText={(valor) => mudaValor('senha', valor, setLogin)}
+              />
+              <BotaoAcao
+                primario={true}
+                titulo="Entrar"
+                onPress={handleAuth}
+                carregando={login.carregando}
+              />
+              <View style={estilos.rodapeContainer}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Cadastro')}>
+                  <Text style={estilos.rodapePrimario}>
+                    Ainda não tem conta?
+                  </Text>
+                  <Text style={estilos.rodapeSecundario}>Cadastre-se!</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
         </View>
       </View>
     </KeyboardAvoidingView>

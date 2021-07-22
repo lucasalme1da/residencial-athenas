@@ -46,7 +46,7 @@ const Cadastro = ({ navigation }) => {
   ]);
   const dispatch = useDispatch();
 
-  const novoUsuario = useSelector((state) => state.usuario);
+  const novoUsuario = useSelector((state) => state.formCadastro);
 
   const mudaValor = (campo, valor) => {
     dispatch(setNovoUsuario(campo, valor));

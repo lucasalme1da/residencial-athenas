@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 
 import { Modal, BotaoAcao } from '../../components';
+import { useSelector } from 'react-redux';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
@@ -22,22 +23,7 @@ const ReservaCriada = require('../../../assets/reserva_criada.png');
 const Fundo = require('../../../assets/logotipo.png');
 
 const DetalharEspacoAdm = ({ props }) => {
-  const [espaco, setEspaco] = useState({
-    id: 'sadfdioafa',
-    tipo: 'Chalé Completo',
-    nome: 'Chalé Olympus',
-    capacidade: 30,
-    maisSobre:
-      'Um chalé aconchegante, com tudo o que você precisa para ter uma experiência diferente aqui no Athenas. Ideal para festas sociais, aniversários, reuniões de empresa ou outros eventos relacionados.',
-    recursos:
-      'Cozinha ampla, 2 Wcs, sala de estar com projetor, ar condicionado e aquecedor.',
-    descricaoFuncionamento: '24 horas por dia, 7 dias por semana',
-    imagens: [
-      'https://media-cdn.tripadvisor.com/media/photo-s/06/ff/da/e8/chales-pedra-do-bau.jpg',
-      'https://media-cdn.tripadvisor.com/media/photo-s/02/24/d4/9b/grunwald-chales.jpg',
-      'https://a0.muscache.com/im/pictures/6173899e-8b40-448d-8222-1925a54c9960.jpg?im_w=720',
-    ],
-  });
+  const espaco = useSelector((state) => state.espacoAtual);
 
   const [escolherData, setEscolherData] = useState(false);
 
@@ -60,7 +46,7 @@ const DetalharEspacoAdm = ({ props }) => {
   const pagination = () => {
     return (
       <Pagination
-        dotsLength={espaco.imagens.length}
+        dotsLength={espaco.fotos.length}
         activeDotIndex={paginaAtual}
         dotStyle={estilos.paginacao}
         inactiveDotStyle={{
@@ -148,7 +134,7 @@ const DetalharEspacoAdm = ({ props }) => {
           <ScrollView style={estilos.espacosContainer}>
             <View style={estilos.carousel}>
               <Carousel
-                data={espaco.imagens}
+                data={espaco.fotos}
                 renderItem={({ item: imagem }) => {
                   return (
                     <Image source={{ uri: imagem }} style={estilos.imagem} />
@@ -180,16 +166,14 @@ const DetalharEspacoAdm = ({ props }) => {
               </View>
             </View>
             <Text style={estilos.listaTitulo}> • Mais sobre o local</Text>
-            <Text style={estilos.listaDescricao}>{espaco.maisSobre}</Text>
+            <Text style={estilos.listaDescricao}>{espaco.descricao}</Text>
             <Text style={estilos.listaTitulo}> • Recursos oferecidos</Text>
             <Text style={estilos.listaDescricao}>{espaco.recursos}</Text>
             <Text style={estilos.listaTitulo}>
               {' '}
               • Descricao sobre funcionamento
             </Text>
-            <Text style={estilos.listaDescricao}>
-              {espaco.descricaoFuncionamento}
-            </Text>
+            <Text style={estilos.listaDescricao}>{espaco.funcionamento}</Text>
 
             <BotaoAcao titulo="Editar" onPress={abrirModal} primario />
             <BotaoAcao titulo="Remover" onPress={() => {}} />
@@ -283,7 +267,7 @@ const estilos = StyleSheet.create({
 
   imagem: {
     width: screenWidth - 70,
-    height: '100%',
+    height: 210,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
@@ -335,6 +319,7 @@ const estilos = StyleSheet.create({
   secaoContainer: {
     width: screenWidth - 70,
     flexDirection: 'row',
+    marginTop: 20,
   },
 
   listaTitulo: {

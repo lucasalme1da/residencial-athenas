@@ -30,6 +30,7 @@ const CampoFoto = ({
         {fotos.map((foto, idx) => (
           <TouchableOpacity
             style={estilos.imagemContainer}
+            key={foto}
             onPress={() =>
               Alert.alert(
                 'Excluir imagem',
@@ -48,11 +49,7 @@ const CampoFoto = ({
                 { cancelable: true },
               )
             }>
-            <Image
-              key={foto}
-              style={estilos.botaoAdicionar}
-              source={{ uri: foto }}
-            />
+            <Image style={estilos.botaoAdicionar} source={{ uri: foto }} />
           </TouchableOpacity>
         ))}
         {fotos.length < limite && (

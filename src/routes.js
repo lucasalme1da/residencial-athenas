@@ -1,5 +1,4 @@
-import React from 'react';
-import * as firebase from 'firebase';
+import React, { useEffect } from 'react';
 import AppLoading from 'expo-app-loading';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -19,7 +18,7 @@ import {
   DetalharEspacoAdm,
 } from './pages/index';
 
-import { firebaseConfig } from './config/firebase';
+import firebase from 'firebase';
 
 import {
   useFonts,
@@ -31,12 +30,7 @@ import {
 
 const Stack = createStackNavigator();
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-} else {
-  firebase.app(); // if already initialized, use that one
-}
-export default function Router() {
+export default function Router({ navigation }) {
   let [fontsLoaded] = useFonts({
     Ubuntu_300Light,
     Ubuntu_400Regular,
@@ -64,7 +58,7 @@ export default function Router() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Landing">
+      <Stack.Navigator initialRouteName={'Entrar'}>
         <Stack.Screen
           name="LandingScreen"
           component={Landing}
@@ -120,7 +114,7 @@ export default function Router() {
           component={DetalharEspaco}
           options={({ route }) => ({
             ...headerOptions,
-            title: route.params.espacoTitulo,
+            title: route.params.espacoNome,
           })}
         />
         <Stack.Screen
@@ -128,7 +122,7 @@ export default function Router() {
           component={DetalharEspacoAdm}
           options={({ route }) => ({
             ...headerOptions,
-            title: route.params.espacoTitulo,
+            title: route.params.espacoNome,
           })}
         />
       </Stack.Navigator>

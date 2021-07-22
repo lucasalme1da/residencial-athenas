@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
-  useCallback,
-} from 'react';
+import React, { useRef } from 'react';
 
 import {
   Dimensions,
@@ -15,18 +9,21 @@ import {
   Text,
   TouchableOpacity,
   KeyboardAvoidingView,
-  ScrollView,
 } from 'react-native';
 
 import { Modal, BotaoAcao } from '../../components';
 
-import { FontAwesome } from '@expo/vector-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { fazerLogout } from '../../actions';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
 const Fundo = require('../../../assets/logotipo.png');
 
 const Conta = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const usuario = useSelector((state) => state.usuario);
+
   const modalRef = useRef(null);
 
   const abrirModal = () => {
@@ -35,13 +32,6 @@ const Conta = ({ navigation }) => {
 
   const fecharModal = () => {
     modalRef.current?.close();
-  };
-
-  const usuario = {
-    nome: 'Lucas Almeida',
-    predio: '5',
-    apto: '22',
-    email: 'lucasdealmeida.ss@gmail.com',
   };
 
   return (
@@ -64,11 +54,11 @@ const Conta = ({ navigation }) => {
           <View style={estilos.dadosContainer}>
             <View>
               <Text style={{ ...estilos.nome, marginBottom: 4 }}>
-                {usuario.nome}
+                {usuario.nomeCompleto}
               </Text>
               <Text style={estilos.apto}>
                 Morador(a) do {usuario.predio}
-                {usuario.apto}
+                {usuario.apartamento}
               </Text>
             </View>
             <Text style={estilos.email}>
@@ -87,8 +77,12 @@ const Conta = ({ navigation }) => {
               <BotaoAcao
                 titulo="Confirmar"
                 onPress={() => {
-                  fecharModal();
-                  navigation.navigate('Entrar');
+                  dispatch(fazerLogout())
+                    .then(() => {
+                      fecharModal();
+                      navigation.navigate('Entrar');
+                    })
+                    .catch((err) => console.log(err));
                 }}
                 primario
               />

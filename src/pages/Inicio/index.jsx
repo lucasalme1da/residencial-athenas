@@ -8,23 +8,27 @@ import {
   Text,
   KeyboardAvoidingView,
   TouchableOpacity,
+  BackHandler,
+  Alert,
 } from 'react-native';
 
 import { CartaoResumido } from '../../components/';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Entypo } from 'react-native-vector-icons';
 
 import * as ImagePicker from 'expo-image-picker';
 
 import Carousel, { Pagination } from 'react-native-snap-carousel';
+import { listarEspacos } from '../../actions/espacosActions';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
 const Fundo = require('../../../assets/logotipo.png');
 
 const Inicio = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [paginaAtual, setPaginaAtual] = useState(0);
   const usuario = useSelector((state) => state.usuario);
 

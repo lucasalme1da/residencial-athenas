@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import * as ImagePicker from 'expo-image-picker';
 import {
   Dimensions,
   Image,
@@ -13,55 +14,57 @@ import {
 } from 'react-native';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { cadastrarNovoUsuario, setNovoUsuario } from '../../actions';
+import {
+  limparNovoEspaco,
+  setNovoEspaco,
+} from '../../actions/formNovoEspacoActions';
+import { criarEspaco } from '../../actions/espacosActions';
 
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import CheckBox from '@react-native-community/checkbox';
-import * as ImagePicker from 'expo-image-picker';
-
-import { CampoFoto, CampoSenha, CampoTexto, BotaoAcao } from '../../components';
+import { CampoFoto, CampoTexto, BotaoAcao } from '../../components';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
-
-import { mudaValor } from '../../utils';
 
 const Fundo = require('../../../assets/logotipo.png');
 
 const AdicionarEspacoAdm = ({ navigation }) => {
+  const [carregando, setCarregando] = useState(false);
   const [passo, setPasso] = useState(1);
 
-  const [novoEspaco, setNovoEspaco] = useState({
-    fotos: [
-      'https://chaledemadeira.com/wp-content/uploads/2020/08/chal%C3%A9-por-dentro-2-1024x732.jpg',
-    ],
-    tipo: '',
-    nome: '',
-    descricao: '',
-    palavrasChave: [],
-    funcionamento: '',
-    capacidade: 0,
-  });
+  const dispatch = useDispatch();
+
+  const novoEspaco = useSelector((state) => state.formNovoEspaco);
+
+  const mudaValor = (campo, valor) => {
+    dispatch(setNovoEspaco(campo, valor));
+  };
 
   const apagarFoto = (foto) => {
     console.log(foto);
-    setNovoEspaco((state) => ({
-      ...state,
-      fotos: state.fotos.filter((f, idx) => idx !== foto),
-    }));
+    dispatch(
+      setNovoEspaco(
+        'fotos',
+        novoEspaco.fotos.filter((f, idx) => idx !== foto),
+      ),
+    );
   };
+
   const adicionarFoto = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.2,
+      aspect: [406, 271],
+      quality: 0.1,
       base64: true,
     });
     if (!result.cancelled) {
-      setNovoEspaco((state) => ({
-        ...state,
-        fotos: [...state.fotos, 'data:image/png;base64,' + result.base64],
-      }));
+      dispatch(
+        setNovoEspaco('fotos', [
+          ...novoEspaco.fotos,
+          'data:image/png;base64,' + result.base64,
+        ]),
+      )
+        .then((r) => console.log(r))
+        .catch((err) => console.log(err));
     }
   };
 
@@ -78,6 +81,46 @@ const AdicionarEspacoAdm = ({ navigation }) => {
       }
     })();
   }, []);
+
+  const cadastroBemSucedido = () => {
+    dispatch(limparNovoEspaco());
+    Alert.alert(
+      'Espaço adicionado',
+      'O espaço foi adicionado com sucesso!',
+      [
+        {
+          text: 'Tela inicial',
+          onPress: () =>
+            navigation.reset({ routes: [{ name: 'NavegacaoAdm' }] }),
+        },
+        {
+          text: 'Lista de espaços',
+          onPress: () =>
+            navigation.reset({
+              index: 1,
+              routes: [{ name: 'NavegacaoAdm' }, { name: 'ListarEspacoAdm' }],
+            }),
+        },
+      ],
+      { cancelable: false },
+    );
+    setCarregando(false);
+  };
+
+  const cadastroMalSucedido = (err) => {
+    Alert.alert(
+      'Erro no cadastro',
+      'Ocorreu um erro ao adicionar o espaço. Tente novamente.',
+    );
+    setCarregando(false);
+  };
+
+  const adicionarEspaco = () => {
+    setCarregando(true);
+    dispatch(criarEspaco(novoEspaco))
+      .then(cadastroBemSucedido)
+      .catch((err) => cadastroMalSucedido(err));
+  };
 
   const renderizarPasso = () => {
     switch (passo) {
@@ -114,7 +157,7 @@ const AdicionarEspacoAdm = ({ navigation }) => {
                   }
                   value={novoEspaco.descricao}
                   rotulo="Descrição"
-                  style={{ height: 96, textAlignVertical: 'top', padding: 12 }}
+                  style={{ height: 126, textAlignVertical: 'top', padding: 12 }}
                   onChangeText={(valor) => mudaValor('descricao', valor)}
                 />
 
@@ -144,7 +187,8 @@ const AdicionarEspacoAdm = ({ navigation }) => {
                 <BotaoAcao
                   primario
                   titulo="Adicionar"
-                  onPress={() => setPasso(2)}
+                  onPress={adicionarEspaco}
+                  carregando={carregando}
                 />
                 <BotaoAcao
                   titulo="Cancelar"
@@ -204,7 +248,11 @@ const estilos = StyleSheet.create({
     fontFamily: 'Ubuntu_300Light',
     textAlign: 'left',
     maxWidth: 300,
+    height: '100%',
     color: '#7a6428',
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 
   conteudo: {
