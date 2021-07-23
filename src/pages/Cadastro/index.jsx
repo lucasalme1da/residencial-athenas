@@ -3,16 +3,16 @@ import {
   Dimensions,
   Image,
   StatusBar,
+  ScrollView,
   StyleSheet,
   View,
   Text,
-  Alert,
   KeyboardAvoidingView,
   TouchableOpacity,
 } from 'react-native';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { cadastrarNovoUsuario, setNovoUsuario } from '../../actions';
+import { fazerCadastro, setNovoUsuario } from '../../actions';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CheckBox from '@react-native-community/checkbox';
@@ -28,6 +28,7 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 const Fundo = require('../../../assets/logotipo.png');
 
 const Cadastro = ({ navigation }) => {
+  const [evitarTeclado, setEvitarTeclado] = useState(false);
   const [passo, setPasso] = useState(1);
   const [predios, setPredios] = useState(['1', '2', '3', '4', '5']);
   const [apartamentos, setApartamentos] = useState([
@@ -48,6 +49,11 @@ const Cadastro = ({ navigation }) => {
 
   const novoUsuario = useSelector((state) => state.formCadastro);
 
+  const mudaTeclado = () => {
+    console.log('mudouy');
+    setEvitarTeclado(!evitarTeclado);
+  };
+
   const mudaValor = (campo, valor) => {
     dispatch(setNovoUsuario(campo, valor));
   };
@@ -64,6 +70,16 @@ const Cadastro = ({ navigation }) => {
       mudaValor('avatar', 'data:image/png;base64,' + result.base64);
     }
   };
+
+  const cadastrar = () =>
+    dispatch(fazerCadastro(novoUsuario))
+      .then(() =>
+        Alert.alert(
+          'Cadastro bem-sucedido',
+          'Morador do apto ' + predio + '-' + apartamento + ' cadastrado!',
+        ),
+      )
+      .catch((err) => Alert.alert('Erro no cadastro', err.message));
 
   useEffect(() => {
     (async () => {
@@ -106,48 +122,52 @@ const Cadastro = ({ navigation }) => {
                   )}
                 </TouchableOpacity>
               </View>
-              <CampoTexto
-                placeholder={'Fulano Beltrano Ciclano'}
-                value={novoUsuario.nomeCompleto}
-                rotulo="Seu nome completo"
-                onChangeText={(valor) => mudaValor('nomeCompleto', valor)}
-              />
-
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <Seletor
-                  rotulo="Número do prédio"
-                  itens={predios}
-                  value={novoUsuario.predio}
-                  onValueChange={(valor) => mudaValor('predio', valor)}
+              <ScrollView>
+                <CampoTexto
+                  placeholder={'Fulano Beltrano Ciclano'}
+                  value={novoUsuario.nomeCompleto}
+                  rotulo="Seu nome completo"
+                  onChangeText={(valor) => mudaValor('nomeCompleto', valor)}
                 />
 
-                <Seletor
-                  rotulo="Número do apto."
-                  itens={apartamentos}
-                  value={novoUsuario.apartamento}
-                  onValueChange={(valor) => mudaValor('apartamento', valor)}
-                />
-              </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Seletor
+                    rotulo="Número do prédio"
+                    itens={predios}
+                    value={novoUsuario.predio}
+                    onValueChange={(valor) => mudaValor('predio', valor)}
+                  />
 
-              <CampoTexto
-                placeholder={'fulano@beltrano.com'}
-                value={novoUsuario.email}
-                rotulo="Endereço de email favorito"
-                onChangeText={(valor) => mudaValor('email', valor)}
-              />
-              <BotaoAcao
-                primario
-                titulo="Continuar"
-                onPress={() => setPasso(2)}
-              />
-              <BotaoAcao
-                titulo="Cancelar"
-                onPress={() => navigation.goBack()}
-              />
+                  <Seletor
+                    rotulo="Número do apto."
+                    itens={apartamentos}
+                    value={novoUsuario.apartamento}
+                    onValueChange={(valor) => mudaValor('apartamento', valor)}
+                  />
+                </View>
+
+                <CampoTexto
+                  placeholder={'fulano@beltrano.com'}
+                  value={novoUsuario.email}
+                  rotulo="Endereço de email favorito"
+                  onChangeText={(valor) => mudaValor('email', valor)}
+                  onFocus={mudaTeclado}
+                  onBlur={mudaTeclado}
+                />
+                <BotaoAcao
+                  primario
+                  titulo="Continuar"
+                  onPress={() => setPasso(2)}
+                />
+                <BotaoAcao
+                  titulo="Cancelar"
+                  onPress={() => navigation.goBack()}
+                />
+              </ScrollView>
             </View>
           </>
         );
@@ -162,51 +182,51 @@ const Cadastro = ({ navigation }) => {
               </Text>
             </View>
             <View style={estilos.conteudo}>
-              <CampoSenha
-                placeholder={'••••••••'}
-                value={novoUsuario.senha}
-                rotulo="Senha"
-                onChangeText={(valor) => mudaValor('senha', valor)}
-              />
-
-              <CampoSenha
-                placeholder={'••••••••'}
-                value={novoUsuario.confirmarSenha}
-                rotulo="Confirmar senha"
-                onChangeText={(valor) => mudaValor('confirmarSenha', valor)}
-              />
-
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginTop: 16,
-                  marginBottom: 116,
-                }}>
-                <CheckBox
-                  disabled={false}
-                  value={novoUsuario.checkbox}
-                  tintColors={{ true: '#897645' }}
-                  onValueChange={(valor) => mudaValor('checkbox', valor)}
+              <View style={{ height: '50%' }}>
+                <CampoSenha
+                  placeholder={'••••••••'}
+                  value={novoUsuario.senha}
+                  rotulo="Senha"
+                  onChangeText={(valor) => mudaValor('senha', valor)}
                 />
-                <Text style={{ ...estilos.descricao, marginLeft: 8 }}>
-                  Declaro que li e estou de acordo com as{' '}
-                  <Text
-                    style={{
-                      fontWeight: 'bold',
-                      textDecorationLine: 'underline',
-                    }}>
-                    Políticas e Termos de Uso.
+
+                <CampoSenha
+                  placeholder={'••••••••'}
+                  value={novoUsuario.confirmarSenha}
+                  rotulo="Confirmar senha"
+                  onChangeText={(valor) => mudaValor('confirmarSenha', valor)}
+                />
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginTop: 16,
+                    marginBottom: 16,
+                  }}>
+                  <CheckBox
+                    disabled={false}
+                    value={novoUsuario.checkbox}
+                    tintColors={{ true: '#897645' }}
+                    onValueChange={(valor) => mudaValor('checkbox', valor)}
+                  />
+                  <Text style={{ ...estilos.descricao, marginLeft: 8 }}>
+                    Declaro que li e estou de acordo com as{' '}
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        textDecorationLine: 'underline',
+                      }}>
+                      Políticas e Termos de Uso.
+                    </Text>
                   </Text>
-                </Text>
+                </View>
               </View>
 
-              <BotaoAcao
-                primario
-                titulo="Continuar"
-                onPress={() => dispatch(fazerCadastro(novoUsuario))}
-              />
-              <BotaoAcao titulo="Voltar" onPress={() => setPasso(1)} />
+              <View style={{ height: 180 }}>
+                <BotaoAcao primario titulo="Continuar" onPress={cadastrar} />
+                <BotaoAcao titulo="Voltar" onPress={() => setPasso(1)} />
+              </View>
             </View>
           </>
         );
@@ -214,7 +234,10 @@ const Cadastro = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">
+    <KeyboardAvoidingView
+      keyboardVerticalOffset={evitarTeclado ? 0 : -screenHeight}
+      style={{ flex: 1 }}
+      behavior="position">
       <View style={estilos.fundoContainer}>
         <Image source={Fundo} style={estilos.fundoImagem} blurRadius={2} />
         {renderizarPasso()}
@@ -278,7 +301,7 @@ const estilos = StyleSheet.create({
     paddingLeft: 35,
 
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
 
   fotoContainer: {

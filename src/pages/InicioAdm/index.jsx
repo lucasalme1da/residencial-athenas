@@ -81,7 +81,7 @@ const InicioAdm = ({ navigation }) => {
   // }, []);
 
   return (
-    <KeyboardAvoidingView style={estilos.fundoContainer} behavior="position">
+    <View style={estilos.fundoContainer}>
       <Image source={Fundo} style={estilos.fundoImagem} blurRadius={2} />
       <View style={estilos.tituloContainer}>
         <Text style={estilos.titulo}>
@@ -110,7 +110,7 @@ const InicioAdm = ({ navigation }) => {
           <Entypo name="add-to-list" size={42} color="white" />
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 

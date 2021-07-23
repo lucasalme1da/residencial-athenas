@@ -21,13 +21,17 @@ import {
 import { Modal, BotaoAcao } from '../../components';
 
 import { FontAwesome } from '@expo/vector-icons';
+import { fazerLogout } from '../../actions';
+import { useDispatch, useSelector } from 'react-redux';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
 const Fundo = require('../../../assets/logotipo.png');
 
 const ContaAdm = ({ navigation }) => {
+  const usuario = useSelector((state) => state.usuario);
   const modalRef = useRef(null);
+  const dispatch = useDispatch();
 
   const abrirModal = () => {
     modalRef.current?.open();
@@ -37,25 +41,25 @@ const ContaAdm = ({ navigation }) => {
     modalRef.current?.close();
   };
 
-  const usuario = {
-    nome: 'Lucas Almeida',
-    predio: '5',
-    apto: '22',
-    email: 'lucasdealmeida.ss@gmail.com',
+  const sair = () => {
+    dispatch(fazerLogout()).then(() => {
+      fecharModal();
+      navigation.navigate('Entrar');
+    });
   };
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">
       <View style={estilos.fundoContainer}>
-        <Image source={Fundo} style={estilos.fundoImagem} blurRadius={2} />
+        <Image source={usuario} style={estilos.fundoImagem} blurRadius={2} />
         <View style={estilos.logotipoContainer}>
           <Text style={estilos.titulo}>Conta</Text>
         </View>
         <View style={estilos.conteudo}>
           <View style={estilos.fotoContainer}>
             <TouchableOpacity style={estilos.fotoBotao} onPress={() => {}}>
-              {false ? (
-                <Image style={estilos.foto} source={{ uri: '' }} />
+              {usuario.avatar ? (
+                <Image style={estilos.foto} source={{ uri: usuario.avatar }} />
               ) : (
                 <Text style={estilos.iniciais}>LA</Text>
               )}
@@ -64,7 +68,7 @@ const ContaAdm = ({ navigation }) => {
           <View style={estilos.dadosContainer}>
             <View>
               <Text style={{ ...estilos.nome, marginBottom: 4 }}>
-                {usuario.nome}
+                {usuario.nomeCompleto}
               </Text>
               <Text style={estilos.apto}>Administrador</Text>
             </View>
@@ -81,14 +85,7 @@ const ContaAdm = ({ navigation }) => {
               Tem certeza que deseja sair da sua conta?
             </Text>
             <View style={estilos.modalBotaoContainer}>
-              <BotaoAcao
-                titulo="Confirmar"
-                onPress={() => {
-                  fecharModal();
-                  navigation.navigate('Entrar');
-                }}
-                primario
-              />
+              <BotaoAcao titulo="Confirmar" onPress={sair} primario />
               <BotaoAcao titulo="Cancelar" onPress={fecharModal} />
             </View>
           </View>

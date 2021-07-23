@@ -13,6 +13,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 import { useSelector, useDispatch } from 'react-redux';
 import {
   limparNovoEspaco,
@@ -23,7 +25,6 @@ import { criarEspaco } from '../../actions/espacosActions';
 import { CampoFoto, CampoTexto, BotaoAcao } from '../../components';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
-
 const Fundo = require('../../../assets/logotipo.png');
 
 const AdicionarEspacoAdm = ({ navigation }) => {
@@ -62,9 +63,7 @@ const AdicionarEspacoAdm = ({ navigation }) => {
           ...novoEspaco.fotos,
           'data:image/png;base64,' + result.base64,
         ]),
-      )
-        .then((r) => console.log(r))
-        .catch((err) => console.log(err));
+      );
     }
   };
 
@@ -128,74 +127,80 @@ const AdicionarEspacoAdm = ({ navigation }) => {
         return (
           <>
             <View style={estilos.conteudo}>
-              <ScrollView>
-                <CampoFoto
-                  rotulo="Adicione fotos do espaço abaixo"
-                  fotos={novoEspaco.fotos}
-                  limite={7}
-                  adicionarFoto={adicionarFoto}
-                  apagarFoto={(foto) => apagarFoto(foto)}
-                />
+              <KeyboardAvoidingView behavior="position">
+                <ScrollView>
+                  <CampoFoto
+                    rotulo="Adicione fotos do espaço abaixo"
+                    fotos={novoEspaco.fotos}
+                    limite={7}
+                    adicionarFoto={adicionarFoto}
+                    apagarFoto={(foto) => apagarFoto(foto)}
+                  />
 
-                <CampoTexto
-                  placeholder={'Chale, Academia, Área de churrasco...'}
-                  value={novoEspaco.tipo}
-                  rotulo="Tipo do espaço"
-                  onChangeText={(valor) => mudaValor('tipo', valor)}
-                />
+                  <CampoTexto
+                    placeholder={'Chale, Academia, Área de churrasco...'}
+                    value={novoEspaco.tipo}
+                    rotulo="Tipo do espaço"
+                    onChangeText={(valor) => mudaValor('tipo', valor)}
+                  />
 
-                <CampoTexto
-                  placeholder={'Adicione um nome simples...'}
-                  value={novoEspaco.nome}
-                  rotulo="Nome do espaço"
-                  onChangeText={(valor) => mudaValor('nome', valor)}
-                />
+                  <CampoTexto
+                    placeholder={'Adicione um nome simples...'}
+                    value={novoEspaco.nome}
+                    rotulo="Nome do espaço"
+                    onChangeText={(valor) => mudaValor('nome', valor)}
+                  />
 
-                <CampoTexto
-                  placeholder={
-                    'Digite uma descrição que deixe claro o que o espaço oferece...'
-                  }
-                  value={novoEspaco.descricao}
-                  rotulo="Descrição"
-                  style={{ height: 126, textAlignVertical: 'top', padding: 12 }}
-                  onChangeText={(valor) => mudaValor('descricao', valor)}
-                />
+                  <CampoTexto
+                    placeholder={
+                      'Digite uma descrição que deixe claro o que o espaço oferece...'
+                    }
+                    value={novoEspaco.descricao}
+                    rotulo="Descrição"
+                    style={{
+                      height: 126,
+                      textAlignVertical: 'top',
+                      padding: 12,
+                    }}
+                    onChangeText={(valor) => mudaValor('descricao', valor)}
+                  />
 
-                <CampoTexto
-                  placeholder={'Cozinha, Banheiro, 2 Quartos...'}
-                  value={novoEspaco.palavrasChave.join(',')}
-                  rotulo="Digite palavras-chave separadas por vírgula"
-                  onChangeText={(valor) =>
-                    mudaValor('palavrasChave', valor.split(','))
-                  }
-                />
+                  <CampoTexto
+                    placeholder={'Cozinha, Banheiro, 2 Quartos...'}
+                    value={novoEspaco.palavrasChave.join(',')}
+                    rotulo="Digite palavras-chave separadas por vírgula"
+                    onChangeText={(valor) =>
+                      mudaValor('palavrasChave', valor.split(','))
+                    }
+                  />
 
-                <CampoTexto
-                  placeholder={'24 horas por dia, 7 dias por semana'}
-                  value={novoEspaco.funcionamento}
-                  rotulo="Informe uma descrição sobre o funcionamento"
-                  onChangeText={(valor) => mudaValor('funcionamento', valor)}
-                />
+                  <CampoTexto
+                    placeholder={'24 horas por dia, 7 dias por semana'}
+                    value={novoEspaco.funcionamento}
+                    rotulo="Informe uma descrição sobre o funcionamento"
+                    onChangeText={(valor) => mudaValor('funcionamento', valor)}
+                  />
 
-                <CampoTexto
-                  placeholder={'30'}
-                  value={novoEspaco.capacidade}
-                  rotulo="Informe a capacidade de pessoas no espaço"
-                  onChangeText={(valor) => mudaValor('capacidade', valor)}
-                />
+                  <CampoTexto
+                    placeholder={'30'}
+                    value={novoEspaco.capacidade}
+                    rotulo="Informe a capacidade de pessoas no espaço"
+                    onChangeText={(valor) => mudaValor('capacidade', valor)}
+                  />
 
-                <BotaoAcao
-                  primario
-                  titulo="Adicionar"
-                  onPress={adicionarEspaco}
-                  carregando={carregando}
-                />
-                <BotaoAcao
-                  titulo="Cancelar"
-                  style={{ marginBottom: 35 }}
-                  onPress={() => navigation.goBack()}
-                />
-              </ScrollView>
+                  <BotaoAcao
+                    primario
+                    titulo="Adicionar"
+                    onPress={adicionarEspaco}
+                    carregando={carregando}
+                  />
+                  <BotaoAcao
+                    titulo="Cancelar"
+                    style={{ marginBottom: 35 }}
+                    onPress={() => navigation.goBack()}
+                  />
+                </ScrollView>
+              </KeyboardAvoidingView>
             </View>
           </>
         );
@@ -203,12 +208,10 @@ const AdicionarEspacoAdm = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">
-      <View style={estilos.fundoContainer}>
-        <Image source={Fundo} style={estilos.fundoImagem} blurRadius={2} />
-        {renderizarPasso()}
-      </View>
-    </KeyboardAvoidingView>
+    <View style={estilos.fundoContainer}>
+      <Image source={Fundo} style={estilos.fundoImagem} blurRadius={2} />
+      {renderizarPasso()}
+    </View>
   );
 };
 
@@ -269,6 +272,8 @@ const estilos = StyleSheet.create({
     paddingRight: 35,
     paddingBottom: 42,
     paddingLeft: 35,
+
+    overflow: 'hidden',
 
     flex: 1,
     justifyContent: 'center',

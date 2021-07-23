@@ -24,11 +24,17 @@ const Fundo = require('../../../assets/logotipo.png');
 
 const ListarEspacoAdm = ({ navigation }) => {
   const dispatch = useDispatch();
-  const [carregando, setCarregando] = useState(true);
-
   const espacos = useSelector((state) => state.espacos);
 
-  const [resultado, setResultado] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+
+  const verDetalhes = (e) => {
+    dispatch(selecionarEspaco(e));
+    return navigation.navigate('DetalharEspacoAdm', {
+      espacoId: e.id,
+      espacoNome: e.nome,
+    });
+  };
 
   const carregarListaDeEspacos = async () => {
     setCarregando(true);
@@ -66,13 +72,7 @@ const ListarEspacoAdm = ({ navigation }) => {
                     <CartaoDetalhado
                       key={espaco.id}
                       espaco={espaco}
-                      detalhar={(e) => {
-                        dispatch(selecionarEspaco(e));
-                        return navigation.navigate('DetalharEspacoAdm', {
-                          espacoId: e.id,
-                          espacoNome: e.nome,
-                        });
-                      }}
+                      detalhar={verDetalhes}
                     />
                   ))}
                 </ScrollView>

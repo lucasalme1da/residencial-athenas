@@ -13,15 +13,15 @@ const listarEspacosAction = (espacos) => ({
 });
 
 export const ATUALIZAR_ESPACO = 'ATUALIZAR_ESPACO';
-const atualizarEspacoAction = (espacos) => ({
+const atualizarEspacoAction = (espaco) => ({
   type: ATUALIZAR_ESPACO,
-  espacos,
+  espaco,
 });
 
 export const DELETAR_ESPACO = 'DELETAR_ESPACO';
-const deletarEspacoAction = (espacos) => ({
+const deletarEspacoAction = (espacoId) => ({
   type: DELETAR_ESPACO,
-  espacos,
+  espacoId,
 });
 
 export const criarEspaco = (espaco) => (dispatch) => {
@@ -38,14 +38,7 @@ export const listarEspacos = () => (dispatch) => {
 
   return db
     .get()
-    .then((snapshot) => {
-      console.log(
-        Object.values(snapshot.val()).map((espaco, idx) => ({
-          ...espaco,
-          fotos: [],
-          id: Object.keys(snapshot.val())[idx],
-        })),
-      );
+    .then((snapshot) =>
       dispatch(
         listarEspacosAction(
           Object.values(snapshot.val()).map((espaco, idx) => ({
@@ -55,7 +48,23 @@ export const listarEspacos = () => (dispatch) => {
             id: Object.keys(snapshot.val())[idx],
           })),
         ),
-      );
-    })
+      ),
+    )
     .catch((err) => console.log(err));
+};
+
+export const atualizarEspaco = (novosDadosDoEspaco) => (dispatch) => {
+  const espacoAtual = firebase
+    .database()
+    .ref(`espacos/${novosDadosDoEspaco.id}`);
+
+  return espacoAtual
+    .update(novosDadosDoEspaco)
+    .then(() => dispatch(atualizarEspacoAction(novosDadosDoEspaco)));
+};
+
+export const deletarEspaco = (idEspaco) => (dispatch) => {
+  const espacos = firebase.database().ref(`espacos/${idEspaco}`);
+
+  return espacos.remove().then(dispatch(deletarEspacoAction(idEspaco)));
 };

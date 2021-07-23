@@ -20,8 +20,10 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/icone.png",
         "backgroundColor": "#F2EEE2"
-      }
+      },
+      "primaryColor": "#ff2ff2"
     },
+    "primaryColor": "#ff2ff2",
     "androidNavigationBar": {
       "barStyle": "dark-content",
       "backgroundColor": "#F1E9D7"

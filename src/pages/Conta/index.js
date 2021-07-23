@@ -34,6 +34,13 @@ const Conta = ({ navigation }) => {
     modalRef.current?.close();
   };
 
+  const sair = () => {
+    dispatch(fazerLogout()).then(() => {
+      fecharModal();
+      navigation.navigate('Entrar');
+    });
+  };
+
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">
       <View style={estilos.fundoContainer}>
@@ -44,8 +51,8 @@ const Conta = ({ navigation }) => {
         <View style={estilos.conteudo}>
           <View style={estilos.fotoContainer}>
             <TouchableOpacity style={estilos.fotoBotao} onPress={() => {}}>
-              {false ? (
-                <Image style={estilos.foto} source={{ uri: '' }} />
+              {usuario.avatar ? (
+                <Image style={estilos.foto} source={{ uri: usuario.avatar }} />
               ) : (
                 <Text style={estilos.iniciais}>LA</Text>
               )}
@@ -74,18 +81,7 @@ const Conta = ({ navigation }) => {
               Tem certeza que deseja sair da sua conta?
             </Text>
             <View style={estilos.modalBotaoContainer}>
-              <BotaoAcao
-                titulo="Confirmar"
-                onPress={() => {
-                  dispatch(fazerLogout())
-                    .then(() => {
-                      fecharModal();
-                      navigation.navigate('Entrar');
-                    })
-                    .catch((err) => console.log(err));
-                }}
-                primario
-              />
+              <BotaoAcao titulo="Confirmar" onPress={sair} primario />
               <BotaoAcao titulo="Cancelar" onPress={fecharModal} />
             </View>
           </View>

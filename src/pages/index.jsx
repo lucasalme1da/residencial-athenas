@@ -9,3 +9,4 @@ export { default as DetalharEspaco } from './DetalharEspaco';
 export { default as DetalharEspacoAdm } from './DetalharEspacoAdm';
 export { default as ListarEspacoAdm } from './ListarEspacoAdm';
 export { default as AdicionarEspacoAdm } from './AdicionarEspacoAdm';
+export { default as EditarEspacoAdm } from './EditarEspacoAdm';

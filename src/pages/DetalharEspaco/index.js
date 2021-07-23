@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 
 import { Modal, BotaoAcao } from '../../components';
+import { useDispatch, useSelector } from 'react-redux';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
@@ -22,22 +23,8 @@ const ReservaCriada = require('../../../assets/reserva_criada.png');
 const Fundo = require('../../../assets/logotipo.png');
 
 const DetalharEspaco = ({ props }) => {
-  const [espaco, setEspaco] = useState({
-    id: 'sadfdioafa',
-    tipo: 'Chalé Completo',
-    nome: 'Chalé Olympus',
-    capacidade: 30,
-    descricao:
-      'Um chalé aconchegante, com tudo o que você precisa para ter uma experiência diferente aqui no Athenas. Ideal para festas sociais, aniversários, reuniões de empresa ou outros eventos relacionados.',
-    recursos:
-      'Cozinha ampla, 2 Wcs, sala de estar com projetor, ar condicionado e aquecedor.',
-    funcionamento: '24 horas por dia, 7 dias por semana',
-    fotos: [
-      'https://media-cdn.tripadvisor.com/media/photo-s/06/ff/da/e8/chales-pedra-do-bau.jpg',
-      'https://media-cdn.tripadvisor.com/media/photo-s/02/24/d4/9b/grunwald-chales.jpg',
-      'https://a0.muscache.com/im/pictures/6173899e-8b40-448d-8222-1925a54c9960.jpg?im_w=720',
-    ],
-  });
+  const dispatch = useDispatch();
+  const espaco = { ...useSelector((state) => state.espacoAtual) };
 
   const [escolherData, setEscolherData] = useState(false);
 
@@ -280,7 +267,7 @@ const estilos = StyleSheet.create({
 
   imagem: {
     width: screenWidth - 70,
-    height: '100%',
+    height: 210,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',

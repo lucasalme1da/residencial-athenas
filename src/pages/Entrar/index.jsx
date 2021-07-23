@@ -124,19 +124,19 @@ const Entrar = ({ navigation }) => {
             Entre com sua conta de morador e começe as reservas!
           </Text>
         </View>
-        <View style={estilos.conteudo}>
-          {loading ? (
-            <View
-              style={{
-                flex: 1,
-                paddingBottom: 50,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <ActivityIndicator size={48} color="#CAB272" />
-            </View>
-          ) : (
-            <>
+        {loading ? (
+          <View
+            style={{
+              flex: 1,
+              paddingBottom: 50,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <ActivityIndicator size={48} color="#CAB272" />
+          </View>
+        ) : (
+          <View style={estilos.conteudo}>
+            <View style={{ height: 150 }}>
               <CampoTexto
                 placeholder={'Email'}
                 value={login.email}
@@ -149,24 +149,21 @@ const Entrar = ({ navigation }) => {
                 value={login.senha}
                 onChangeText={(valor) => mudaValor('senha', valor, setLogin)}
               />
-              <BotaoAcao
-                primario={true}
-                titulo="Entrar"
-                onPress={handleAuth}
-                carregando={login.carregando}
-              />
-              <View style={estilos.rodapeContainer}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('Cadastro')}>
-                  <Text style={estilos.rodapePrimario}>
-                    Ainda não tem conta?
-                  </Text>
-                  <Text style={estilos.rodapeSecundario}>Cadastre-se!</Text>
-                </TouchableOpacity>
-              </View>
-            </>
-          )}
-        </View>
+            </View>
+            <BotaoAcao
+              primario={true}
+              titulo="Entrar"
+              onPress={handleAuth}
+              carregando={login.carregando}
+            />
+            <View style={estilos.rodapeContainer}>
+              <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
+                <Text style={estilos.rodapePrimario}>Ainda não tem conta?</Text>
+                <Text style={estilos.rodapeSecundario}>Cadastre-se!</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </View>
     </KeyboardAvoidingView>
   );
@@ -181,6 +178,7 @@ const estilos = StyleSheet.create({
   },
 
   fundoImagem: {
+    height: screenHeight,
     position: 'absolute',
     opacity: 0.15,
     alignSelf: 'center',
@@ -188,7 +186,7 @@ const estilos = StyleSheet.create({
 
   conteudo: {
     width: screenWidth,
-    height: screenHeight - 400,
+    height: screenHeight * 0.5,
     backgroundColor: 'white',
     position: 'absolute',
     bottom: 0,

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import * as ImagePicker from 'expo-image-picker';
 import {
   Dimensions,
   Image,
@@ -10,58 +11,61 @@ import {
   Alert,
   KeyboardAvoidingView,
   TouchableOpacity,
+  BackHandler,
 } from 'react-native';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { cadastrarNovoUsuario, setNovoUsuario } from '../../actions';
+import {
+  selecionarEspaco,
+  setEspacoAtual,
+} from '../../actions/espacoAtualActions';
 
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import CheckBox from '@react-native-community/checkbox';
-import * as ImagePicker from 'expo-image-picker';
+import { atualizarEspaco } from '../../actions/espacosActions';
 
-import { CampoFoto, CampoSenha, CampoTexto, BotaoAcao } from '../../components';
+import { CampoFoto, CampoTexto, BotaoAcao } from '../../components';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
-
-import { mudaValor } from '../../utils';
 
 const Fundo = require('../../../assets/logotipo.png');
 
 const EditarEspacoAdm = ({ navigation }) => {
-  const [passo, setPasso] = useState(1);
+  const [carregando, setCarregando] = useState(false);
 
-  const [novoEspaco, setNovoEspaco] = useState({
-    fotos: [
-      'https://chaledemadeira.com/wp-content/uploads/2020/08/chal%C3%A9-por-dentro-2-1024x732.jpg',
-    ],
-    tipo: '',
-    nome: '',
-    descricao: '',
-    palavrasChave: [],
-    funcionamento: '',
-    capacidade: 0,
-  });
+  const dispatch = useDispatch();
+
+  const espacoAtual = useSelector((state) => state.espacoAtual);
+  const backupEspaco = { ...espacoAtual };
+
+  const mudaValor = (campo, valor) => {
+    dispatch(setEspacoAtual(campo, valor));
+  };
 
   const apagarFoto = (foto) => {
-    console.log(foto);
-    setNovoEspaco((state) => ({
-      ...state,
-      fotos: state.fotos.filter((f, idx) => idx !== foto),
-    }));
+    dispatch(
+      setEspacoAtual(
+        'fotos',
+        espacoAtual.fotos.filter((f, idx) => idx !== foto),
+      ),
+    );
   };
+
   const adicionarFoto = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.2,
+      aspect: [406, 271],
+      quality: 0.1,
       base64: true,
     });
     if (!result.cancelled) {
-      setNovoEspaco((state) => ({
-        ...state,
-        fotos: [...state.fotos, 'data:image/png;base64,' + result.base64],
-      }));
+      dispatch(
+        setEspacoAtual('fotos', [
+          ...espacoAtual.fotos,
+          'data:image/png;base64,' + result.base64,
+        ]),
+      )
+        .then((r) => console.log(r))
+        .catch((err) => console.log(err));
     }
   };
 
@@ -79,90 +83,140 @@ const EditarEspacoAdm = ({ navigation }) => {
     })();
   }, []);
 
-  const renderizarPasso = () => {
-    switch (passo) {
-      case 1:
-        return (
-          <>
-            <View style={estilos.conteudo}>
-              <ScrollView>
-                <CampoFoto
-                  rotulo="Adicione fotos do espaço abaixo"
-                  fotos={novoEspaco.fotos}
-                  limite={7}
-                  adicionarFoto={adicionarFoto}
-                  apagarFoto={(foto) => apagarFoto(foto)}
-                />
-
-                <CampoTexto
-                  placeholder={'Chale, Academia, Área de churrasco...'}
-                  value={novoEspaco.tipo}
-                  rotulo="Tipo do espaço"
-                  onChangeText={(valor) => mudaValor('tipo', valor)}
-                />
-
-                <CampoTexto
-                  placeholder={'Adicione um nome simples...'}
-                  value={novoEspaco.nome}
-                  rotulo="Nome do espaço"
-                  onChangeText={(valor) => mudaValor('nome', valor)}
-                />
-
-                <CampoTexto
-                  placeholder={
-                    'Digite uma descrição que deixe claro o que o espaço oferece...'
-                  }
-                  value={novoEspaco.descricao}
-                  rotulo="Descrição"
-                  style={{ height: 96, textAlignVertical: 'top', padding: 12 }}
-                  onChangeText={(valor) => mudaValor('descricao', valor)}
-                />
-
-                <CampoTexto
-                  placeholder={'Cozinha, Banheiro, 2 Quartos...'}
-                  value={novoEspaco.palavrasChave.join(',')}
-                  rotulo="Digite palavras-chave separadas por vírgula"
-                  onChangeText={(valor) =>
-                    mudaValor('palavrasChave', valor.split(','))
-                  }
-                />
-
-                <CampoTexto
-                  placeholder={'24 horas por dia, 7 dias por semana'}
-                  value={novoEspaco.funcionamento}
-                  rotulo="Informe uma descrição sobre o funcionamento"
-                  onChangeText={(valor) => mudaValor('funcionamento', valor)}
-                />
-
-                <CampoTexto
-                  placeholder={'30'}
-                  value={novoEspaco.capacidade}
-                  rotulo="Informe a capacidade de pessoas no espaço"
-                  onChangeText={(valor) => mudaValor('capacidade', valor)}
-                />
-
-                <BotaoAcao
-                  primario
-                  titulo="Adicionar"
-                  onPress={() => setPasso(2)}
-                />
-                <BotaoAcao
-                  titulo="Cancelar"
-                  style={{ marginBottom: 35 }}
-                  onPress={() => navigation.goBack()}
-                />
-              </ScrollView>
-            </View>
-          </>
-        );
-    }
+  const edicaoBemSucedida = () => {
+    dispatch(selecionarEspaco(espacoAtual));
+    Alert.alert(
+      'Espaço editado',
+      'O espaço foi editado com sucesso!',
+      [
+        {
+          text: 'Ok',
+          onPress: () => navigation.goBack(),
+        },
+      ],
+      { cancelable: false },
+    );
+    setCarregando(false);
   };
+
+  const edicaoMalSucedida = (err) => {
+    Alert.alert(
+      'Erro na edição',
+      'Ocorreu um erro ao editar o espaço. Tente novamente.',
+    );
+    setCarregando(false);
+  };
+
+  const salvarEdicao = () => {
+    setCarregando(true);
+    dispatch(atualizarEspaco(espacoAtual))
+      .then(edicaoBemSucedida)
+      .catch((err) => edicaoMalSucedida(err));
+  };
+
+  const cancelarEdicao = () => {
+    Alert.alert(
+      'Cancelar edição',
+      'Tem certeza que deseja cancelar a edição deste espaço?',
+      [
+        {
+          text: 'Continuar editando',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        {
+          text: 'Sair',
+          onPress: () => dispatch(selecionarEspaco(backupEspaco)),
+        },
+      ],
+    );
+    return true;
+  };
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      cancelarEdicao,
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">
       <View style={estilos.fundoContainer}>
         <Image source={Fundo} style={estilos.fundoImagem} blurRadius={2} />
-        {renderizarPasso()}
+
+        <View style={estilos.conteudo}>
+          <ScrollView>
+            <CampoFoto
+              rotulo="Adicione fotos do espaço abaixo"
+              fotos={espacoAtual.fotos}
+              limite={7}
+              adicionarFoto={adicionarFoto}
+              apagarFoto={(foto) => apagarFoto(foto)}
+            />
+
+            <CampoTexto
+              placeholder={'Chale, Academia, Área de churrasco...'}
+              value={espacoAtual.tipo}
+              rotulo="Tipo do espaço"
+              onChangeText={(valor) => mudaValor('tipo', valor)}
+            />
+
+            <CampoTexto
+              placeholder={'Adicione um nome simples...'}
+              value={espacoAtual.nome}
+              rotulo="Nome do espaço"
+              onChangeText={(valor) => mudaValor('nome', valor)}
+            />
+
+            <CampoTexto
+              placeholder={
+                'Digite uma descrição que deixe claro o que o espaço oferece...'
+              }
+              value={espacoAtual.descricao}
+              rotulo="Descrição"
+              style={{ height: 126, textAlignVertical: 'top', padding: 12 }}
+              onChangeText={(valor) => mudaValor('descricao', valor)}
+            />
+
+            <CampoTexto
+              placeholder={'Cozinha, Banheiro, 2 Quartos...'}
+              value={espacoAtual.palavrasChave.join(',')}
+              rotulo="Digite palavras-chave separadas por vírgula"
+              onChangeText={(valor) =>
+                mudaValor('palavrasChave', valor.split(','))
+              }
+            />
+
+            <CampoTexto
+              placeholder={'24 horas por dia, 7 dias por semana'}
+              value={espacoAtual.funcionamento}
+              rotulo="Informe uma descrição sobre o funcionamento"
+              onChangeText={(valor) => mudaValor('funcionamento', valor)}
+            />
+
+            <CampoTexto
+              placeholder={'30'}
+              value={espacoAtual.capacidade}
+              rotulo="Informe a capacidade de pessoas no espaço"
+              onChangeText={(valor) => mudaValor('capacidade', valor)}
+            />
+
+            <BotaoAcao
+              primario
+              titulo="Salvar"
+              onPress={salvarEdicao}
+              carregando={carregando}
+            />
+            <BotaoAcao
+              titulo="Cancelar"
+              style={{ marginBottom: 35 }}
+              onPress={cancelarEdicao}
+            />
+          </ScrollView>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -204,7 +258,11 @@ const estilos = StyleSheet.create({
     fontFamily: 'Ubuntu_300Light',
     textAlign: 'left',
     maxWidth: 300,
+    height: '100%',
     color: '#7a6428',
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 
   conteudo: {

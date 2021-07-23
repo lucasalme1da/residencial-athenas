@@ -58,7 +58,7 @@ const Inicio = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView style={estilos.fundoContainer} behavior="position">
+    <View style={estilos.fundoContainer}>
       <Image source={Fundo} style={estilos.fundoImagem} blurRadius={2} />
       <View style={estilos.tituloContainer}>
         <Text style={estilos.titulo}>
@@ -132,7 +132,7 @@ const Inicio = ({ navigation }) => {
           </View>
         </View>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TextInput, Text } from 'react-native';
+import { StyleSheet, TextInput, Text, View } from 'react-native';
 
 const CampoTexto = ({
   onChangeText,
@@ -10,8 +10,9 @@ const CampoTexto = ({
   ...rest
 }) => {
   return (
-    <>
+    <View style={{ flex: 1, maxHeight: 92 }}>
       {rotulo && <Text style={estilos.rotulo}>{rotulo}</Text>}
+
       <TextInput
         style={{ ...estilos.campo, ...style }}
         onChangeText={onChangeText}
@@ -19,8 +20,9 @@ const CampoTexto = ({
         placeholder={placeholder}
         placeholderTextColor="#95835370"
         multiline
+        {...rest}
       />
-    </>
+    </View>
   );
 };
 
@@ -34,10 +36,7 @@ const estilos = StyleSheet.create({
     borderRadius: 8,
     paddingLeft: 16,
     color: '#7a6428',
-    marginBottom: 20,
-    flex: 1,
-    flexWrap: 'wrap',
-    flexDirection: 'row',
+    marginBottom: 16,
   },
   rotulo: {
     fontFamily: 'Ubuntu_400Regular',

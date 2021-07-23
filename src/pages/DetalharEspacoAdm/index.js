@@ -1,8 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import moment from 'moment';
 
 import {
   Dimensions,
@@ -12,41 +10,27 @@ import {
   View,
   Text,
   ScrollView,
+  Alert,
 } from 'react-native';
 
-import { Modal, BotaoAcao } from '../../components';
-import { useSelector } from 'react-redux';
+import { BotaoAcao } from '../../components';
+import { useDispatch, useSelector } from 'react-redux';
+import { deletarEspaco } from '../../actions/espacosActions';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
-const ReservaCriada = require('../../../assets/reserva_criada.png');
 const Fundo = require('../../../assets/logotipo.png');
 
-const DetalharEspacoAdm = ({ props }) => {
-  const espaco = useSelector((state) => state.espacoAtual);
-
-  const [escolherData, setEscolherData] = useState(false);
-
-  const [dataReserva, setDataReserva] = useState(null);
-
-  const [passoModal, setPassoModal] = useState(1);
-
-  const modalRef = useRef(null);
-
-  const abrirModal = () => {
-    modalRef.current?.open();
-  };
-
-  const fecharModal = () => {
-    modalRef.current?.close();
-  };
+const DetalharEspacoAdm = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const espaco = { ...useSelector((state) => state.espacoAtual) };
 
   const [paginaAtual, setPaginaAtual] = useState(0);
 
   const pagination = () => {
     return (
       <Pagination
-        dotsLength={espaco.fotos.length}
+        dotsLength={espaco?.fotos.length}
         activeDotIndex={paginaAtual}
         dotStyle={estilos.paginacao}
         inactiveDotStyle={{
@@ -61,127 +45,100 @@ const DetalharEspacoAdm = ({ props }) => {
     );
   };
 
-  const renderizarModal = () => {
-    switch (passoModal) {
-      case 1:
-        return (
-          <View style={estilos.modalReservarContainer}>
-            <Text style={estilos.modalTitulo}>Você está reservando</Text>
-            <Text style={estilos.modalNomeEspaco}>{espaco.nome}</Text>
-            <View style={{ width: screenWidth - 70 }}>
-              <Text style={estilos.modalBotaoDataNome}>
-                escolha a data abaixo
-              </Text>
-              <BotaoAcao
-                titulo={
-                  moment(dataReserva).isValid()
-                    ? moment(dataReserva).format('DD/MM/YYYY')
-                    : 'Escolher data'
-                }
-                onPress={() => setEscolherData(true)}
-              />
-              <DateTimePickerModal
-                isVisible={escolherData}
-                mode="date"
-                onConfirm={(data) => {
-                  setDataReserva(data);
-                  setEscolherData(false);
-                }}
-                onCancel={() => setEscolherData(false)}
-                minimumDate={new Date()}
-              />
-            </View>
-            <Text style={estilos.modalAlerta}>
-              Você só poderá cancelar sua reserva até 24 horas antes do dia da
-              reserva!
-            </Text>
-            <View style={estilos.modalBotaoContainer}>
-              <BotaoAcao
-                titulo="Confirmar reserva"
-                onPress={() => {
-                  setPassoModal(2);
-                }}
-                primario
-              />
-              <BotaoAcao titulo="Cancelar" onPress={fecharModal} />
-            </View>
-          </View>
-        );
-      case 2:
-        return (
-          <View style={estilos.modalReservaCriada}>
-            <Image source={ReservaCriada} style={estilos.modalImagem} />
-            <Text style={estilos.reservaTitulo}>
-              Reserva concluída com sucesso!
-            </Text>
-            <Text style={estilos.modalAlerta}>
-              Você pode ver todas as suas reservas na aba de “Reservas” do menu
-              principal.
-            </Text>
-            <View style={estilos.modalBotaoContainer}>
-              <BotaoAcao titulo="Fechar" onPress={fecharModal} />
-            </View>
-          </View>
-        );
-    }
+  const deletar = () => {
+    Alert.alert(
+      'Remover espaço',
+      'Tem certeza que deseja remover este espaço definitivamente?',
+      [
+        {
+          text: 'cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Remover definitivamente',
+          onPress: () => {
+            dispatch(deletarEspaco(espaco?.id)).then(() =>
+              Alert.alert(
+                'Espaço removido',
+                'Este espaço foi removido definitivamente.',
+                [
+                  {
+                    text: 'Ok',
+                    onPress: () => {
+                      navigation.goBack();
+                    },
+                  },
+                ],
+              ),
+            );
+          },
+        },
+      ],
+      { cancelable: true },
+    );
   };
 
   return (
     <View style={{ flex: 1 }} behavior="position">
       <View style={estilos.fundoContainer}>
         <Image source={Fundo} style={estilos.fundoImagem} blurRadius={2} />
-        <View style={estilos.conteudo}>
-          <ScrollView style={estilos.espacosContainer}>
-            <View style={estilos.carousel}>
-              <Carousel
-                data={espaco.fotos}
-                renderItem={({ item: imagem }) => {
-                  return (
-                    <Image source={{ uri: imagem }} style={estilos.imagem} />
-                  );
-                }}
-                onSnapToItem={(index) => setPaginaAtual(index)}
-                sliderWidth={screenWidth}
-                itemWidth={screenWidth}
-              />
-              {pagination()}
-            </View>
-            <View style={estilos.secaoContainer}>
-              <View style={estilos.tituloContainer}>
-                <View style={estilos.tagContainer}>
-                  <Text style={estilos.tag}>{espaco.tipo}</Text>
-                </View>
-                <Text style={estilos.titulo}>{espaco.nome}</Text>
-              </View>
-              <View style={estilos.capacidadeContainer}>
-                <MaterialCommunityIcons
-                  name="account-group"
-                  size={24}
-                  color="#7A6428"
+        {espaco && (
+          <View style={estilos.conteudo}>
+            <ScrollView style={estilos.espacosContainer}>
+              <View style={estilos.carousel}>
+                <Carousel
+                  data={espaco?.fotos}
+                  renderItem={({ item: imagem }) => {
+                    return (
+                      <Image source={{ uri: imagem }} style={estilos.imagem} />
+                    );
+                  }}
+                  onSnapToItem={(index) => setPaginaAtual(index)}
+                  sliderWidth={screenWidth}
+                  itemWidth={screenWidth}
                 />
-                <Text style={{ ...estilos.capacidadeTexto, fontSize: 16 }}>
-                  {espaco.capacidade}
-                </Text>
-                <Text style={estilos.capacidadeTexto}>Capacidade</Text>
+                {pagination()}
               </View>
-            </View>
-            <Text style={estilos.listaTitulo}> • Mais sobre o local</Text>
-            <Text style={estilos.listaDescricao}>{espaco.descricao}</Text>
-            <Text style={estilos.listaTitulo}> • Recursos oferecidos</Text>
-            <Text style={estilos.listaDescricao}>{espaco.recursos}</Text>
-            <Text style={estilos.listaTitulo}>
-              {' '}
-              • Descricao sobre funcionamento
-            </Text>
-            <Text style={estilos.listaDescricao}>{espaco.funcionamento}</Text>
+              <View style={estilos.secaoContainer}>
+                <View style={estilos.tituloContainer}>
+                  <View style={estilos.tagContainer}>
+                    <Text style={estilos.tag}>{espaco?.tipo}</Text>
+                  </View>
+                  <Text style={estilos.titulo}>{espaco?.nome}</Text>
+                </View>
+                <View style={estilos.capacidadeContainer}>
+                  <MaterialCommunityIcons
+                    name="account-group"
+                    size={24}
+                    color="#7A6428"
+                  />
+                  <Text style={{ ...estilos.capacidadeTexto, fontSize: 16 }}>
+                    {espaco?.capacidade}
+                  </Text>
+                  <Text style={estilos.capacidadeTexto}>Capacidade</Text>
+                </View>
+              </View>
+              <Text style={estilos.listaTitulo}> • Mais sobre o local</Text>
+              <Text style={estilos.listaDescricao}>{espaco?.descricao}</Text>
+              <Text style={estilos.listaTitulo}> • Recursos oferecidos</Text>
+              <Text style={estilos.listaDescricao}>{espaco?.recursos}</Text>
+              <Text style={estilos.listaTitulo}>
+                {' '}
+                • Descricao sobre funcionamento
+              </Text>
+              <Text style={estilos.listaDescricao}>
+                {espaco?.funcionamento}
+              </Text>
 
-            <BotaoAcao titulo="Editar" onPress={abrirModal} primario />
-            <BotaoAcao titulo="Remover" onPress={() => {}} />
-          </ScrollView>
-          <Modal modalRef={modalRef} altura={450}>
-            {renderizarModal()}
-          </Modal>
-        </View>
+              <BotaoAcao
+                titulo="Editar"
+                onPress={() => navigation.navigate('EditarEspacoAdm')}
+                primario
+              />
+              <BotaoAcao titulo="Remover" onPress={deletar} />
+            </ScrollView>
+          </View>
+        )}
       </View>
     </View>
   );

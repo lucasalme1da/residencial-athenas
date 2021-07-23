@@ -8,12 +8,12 @@ export const setNovoUsuario = (campo, valor) => ({
   valor,
 });
 
-export const fazerCadastro = (usuario) => {
+export const fazerCadastro = (usuario) => (dispatch) => {
   const { email, senha, nomeCompleto, predio, apartamento, avatar } = usuario;
 
   const db = firebase.database().ref('usuarios');
 
-  firebase
+  return firebase
     .auth()
     .createUserWithEmailAndPassword(email, senha)
     .then((usuarioRegistrado) =>
@@ -26,12 +26,5 @@ export const fazerCadastro = (usuario) => {
         avatar,
         tipo: 'usuario',
       }),
-    )
-    .then(() =>
-      Alert.alert(
-        'Cadastro bem-sucedido',
-        'Morador do apto ' + predio + '-' + apartamento + ' cadastrado!',
-      ),
-    )
-    .catch((err) => Alert.alert('Erro no cadastro', err.message));
+    );
 };

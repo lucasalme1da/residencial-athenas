@@ -7,18 +7,15 @@ import { Landing } from './components/index';
 import {
   Entrar,
   Cadastro,
-  Inicio,
   NavegacaoMorador,
   NavegacaoAdm,
-  Reservas,
   Procurar,
   ListarEspacoAdm,
   AdicionarEspacoAdm,
   DetalharEspaco,
   DetalharEspacoAdm,
+  EditarEspacoAdm,
 } from './pages/index';
-
-import firebase from 'firebase';
 
 import {
   useFonts,
@@ -27,10 +24,13 @@ import {
   Ubuntu_500Medium,
   Ubuntu_700Bold,
 } from '@expo-google-fonts/ubuntu';
+import { useSelector } from 'react-redux';
 
 const Stack = createStackNavigator();
 
 export default function Router({ navigation }) {
+  const espacoAtual = useSelector((state) => state.espacoAtual);
+
   let [fontsLoaded] = useFonts({
     Ubuntu_300Light,
     Ubuntu_400Regular,
@@ -110,20 +110,19 @@ export default function Router({ navigation }) {
           options={{ ...headerOptions, title: 'Adicionar espaço' }}
         />
         <Stack.Screen
+          name="EditarEspacoAdm"
+          component={EditarEspacoAdm}
+          options={{ ...headerOptions, title: 'Editar espaço' }}
+        />
+        <Stack.Screen
           name="DetalharEspaco"
           component={DetalharEspaco}
-          options={({ route }) => ({
-            ...headerOptions,
-            title: route.params.espacoNome,
-          })}
+          options={{ ...headerOptions, title: espacoAtual?.nome || '' }}
         />
         <Stack.Screen
           name="DetalharEspacoAdm"
           component={DetalharEspacoAdm}
-          options={({ route }) => ({
-            ...headerOptions,
-            title: route.params.espacoNome,
-          })}
+          options={{ ...headerOptions, title: espacoAtual?.nome || '' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

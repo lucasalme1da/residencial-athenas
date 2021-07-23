@@ -7,7 +7,7 @@ const CampoSenha = ({ onChangeText, value, placeholder, rotulo }) => {
   const [esconder, setEsconder] = useState(true);
 
   return (
-    <>
+    <View style={{ flex: 1, maxHeight: 100 }}>
       {rotulo && <Text style={estilos.rotulo}>{rotulo}</Text>}
       <View style={estilos.container}>
         <TextInput
@@ -25,18 +25,20 @@ const CampoSenha = ({ onChangeText, value, placeholder, rotulo }) => {
           onPress={() => setEsconder(!esconder)}
         />
       </View>
-    </>
+    </View>
   );
 };
 
 const estilos = StyleSheet.create({
   container: {
     flex: 1,
+    maxHeight: 48,
     justifyContent: 'center',
     position: 'relative',
   },
 
   campo: {
+    fontFamily: 'Ubuntu_400Regular',
     maxWidth: 340,
     minWidth: 'auto',
     height: 48,
@@ -53,14 +55,16 @@ const estilos = StyleSheet.create({
     color: '#7A6428',
     right: 0,
     position: 'absolute',
-    top: 24,
+    top: 0,
+    bottom: 0,
     marginRight: 8,
+    marginTop: 2,
   },
 
   rotulo: {
     fontFamily: 'Ubuntu_400Regular',
     color: '#7A6428',
-    marginBottom: 8,
+    marginBottom: 18,
   },
 });
 
