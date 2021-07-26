@@ -182,6 +182,16 @@ const EditarEspacoAdm = ({ navigation }) => {
             />
 
             <CampoTexto
+              placeholder={
+                'Resuma brevemente quais são os recursos do espaço...'
+              }
+              value={espacoAtual.recursos}
+              rotulo="Recursos do espaço"
+              maxLength={68}
+              onChangeText={(valor) => mudaValor('recursos', valor)}
+            />
+
+            <CampoTexto
               placeholder={'Cozinha, Banheiro, 2 Quartos...'}
               value={espacoAtual.palavrasChave.join(',')}
               rotulo="Digite palavras-chave separadas por vírgula"

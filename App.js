@@ -28,7 +28,12 @@ const store = createStore(
   composeWithDevTools(applyMiddleware(reduxThunk)),
 );
 
+import moment from 'moment';
+import 'moment/locale/pt-br';
+
 const App = ({ navigation }) => {
+  moment.locale('pt-BR');
+
   useEffect(() => {
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);

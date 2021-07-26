@@ -9,6 +9,7 @@ import {
   Text,
   ScrollView,
   ActivityIndicator,
+  FlatList,
 } from 'react-native';
 
 import { CampoTexto, CartaoDetalhado } from '../../components';
@@ -25,6 +26,7 @@ const Procurar = ({ navigation }) => {
   const dispatch = useDispatch();
   const espacos = useSelector((state) => state.espacos);
 
+  const [quantidadeResultados, setQuantidadeResultados] = useState(3);
   const [pesquisa, setPesquisa] = useState('');
   const [carregando, setCarregando] = useState(true);
   const [resultado, setResultado] = useState([]);
@@ -61,16 +63,22 @@ const Procurar = ({ navigation }) => {
   );
 
   const renderizarCartoes = useCallback(
-    (espacos) =>
-      espacos.map((espaco) => (
-        <CartaoDetalhado
-          key={espaco.id}
-          espaco={espaco}
-          detalhar={verDetalhes}
-        />
-      )),
+    ({ item: espaco }) => (
+      <CartaoDetalhado key={espaco.id} espaco={espaco} detalhar={verDetalhes} />
+    ),
     [],
   );
+
+  const carregarMaisCartoes = () => {
+    if (quantidadeResultados === espacos.length) return null;
+    return setQuantidadeResultados(quantidadeResultados + 3);
+  };
+
+  const dadosFlatlist = () => {
+    return pesquisa.trim('') !== ''
+      ? resultado.slice(0, quantidadeResultados)
+      : espacos.slice(0, quantidadeResultados);
+  };
 
   useEffect(() => {
     carregarListaDeEspacos();
@@ -104,11 +112,13 @@ const Procurar = ({ navigation }) => {
                   {pesquisa.trim('') !== '' ? resultado.length : espacos.length}{' '}
                   espaço(s) encontrado(s)
                 </Text>
-                <ScrollView style={estilos.espacosContainer}>
-                  {pesquisa.trim('') !== ''
-                    ? renderizarCartoes(resultado)
-                    : renderizarCartoes(espacos)}
-                </ScrollView>
+                <FlatList
+                  style={estilos.espacosContainer}
+                  data={dadosFlatlist()}
+                  renderItem={renderizarCartoes}
+                  onEndReached={carregarMaisCartoes}
+                  onEndReachedThreshold={0.1}
+                />
               </>
             ) : (
               <View style={estilos.nenhumResultadoContainer}>

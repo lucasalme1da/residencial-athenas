@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import {
   Dimensions,
@@ -7,10 +7,9 @@ import {
   StyleSheet,
   View,
   Text,
-  ScrollView,
+  FlatList,
   ActivityIndicator,
 } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
 
 import { CartaoDetalhado } from '../../components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,6 +25,7 @@ const ListarEspacoAdm = ({ navigation }) => {
   const dispatch = useDispatch();
   const espacos = useSelector((state) => state.espacos);
 
+  const [quantidadeResultados, setQuantidadeResultados] = useState(3);
   const [carregando, setCarregando] = useState(true);
 
   const verDetalhes = (e) => {
@@ -40,6 +40,22 @@ const ListarEspacoAdm = ({ navigation }) => {
     setCarregando(true);
     await dispatch(listarEspacos());
     setCarregando(false);
+  };
+
+  const renderizarCartoes = useCallback(
+    ({ item: espaco }) => (
+      <CartaoDetalhado key={espaco.id} espaco={espaco} detalhar={verDetalhes} />
+    ),
+    [],
+  );
+
+  const carregarMaisCartoes = () => {
+    if (quantidadeResultados === espacos.length) return null;
+    return setQuantidadeResultados(quantidadeResultados + 3);
+  };
+
+  const dadosFlatlist = () => {
+    return espacos.slice(0, quantidadeResultados);
   };
 
   useEffect(() => {
@@ -66,16 +82,14 @@ const ListarEspacoAdm = ({ navigation }) => {
               <Text style={estilos.descricao}>
                 {espacos.length} espaço(s) cadastrado(s)
               </Text>
-              {true ? (
-                <ScrollView style={estilos.espacosContainer}>
-                  {espacos.map((espaco) => (
-                    <CartaoDetalhado
-                      key={espaco.id}
-                      espaco={espaco}
-                      detalhar={verDetalhes}
-                    />
-                  ))}
-                </ScrollView>
+              {espacos ? (
+                <FlatList
+                  style={estilos.espacosContainer}
+                  data={dadosFlatlist()}
+                  renderItem={renderizarCartoes}
+                  onEndReached={carregarMaisCartoes}
+                  onEndReachedThreshold={0.1}
+                />
               ) : (
                 <View style={estilos.nenhumResultadoContainer}>
                   <Image
@@ -83,7 +97,7 @@ const ListarEspacoAdm = ({ navigation }) => {
                     style={estilos.nenhumResultadoImagem}
                   />
                   <Text style={estilos.nenhumResultadoTexto}>
-                    Nenhum resultado com esse nome :(
+                    Nenhum espaço cadastrado :(
                   </Text>
                 </View>
               )}

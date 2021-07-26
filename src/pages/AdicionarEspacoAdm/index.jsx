@@ -166,6 +166,16 @@ const AdicionarEspacoAdm = ({ navigation }) => {
                   />
 
                   <CampoTexto
+                    placeholder={
+                      'Resuma brevemente quais são os recursos do espaço...'
+                    }
+                    value={novoEspaco.recursos}
+                    maxLength={68}
+                    rotulo="Recursos do espaço"
+                    onChangeText={(valor) => mudaValor('recursos', valor)}
+                  />
+
+                  <CampoTexto
                     placeholder={'Cozinha, Banheiro, 2 Quartos...'}
                     value={novoEspaco.palavrasChave.join(',')}
                     rotulo="Digite palavras-chave separadas por vírgula"

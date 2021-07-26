@@ -12,7 +12,10 @@ import {
   View,
   Text,
   ScrollView,
+  Alert,
 } from 'react-native';
+
+import { criarReserva } from '../../actions';
 
 import { Modal, BotaoAcao } from '../../components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,14 +25,14 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 const ReservaCriada = require('../../../assets/reserva_criada.png');
 const Fundo = require('../../../assets/logotipo.png');
 
-const DetalharEspaco = ({ props }) => {
+const DetalharEspaco = ({ navigation }) => {
   const dispatch = useDispatch();
+  const usuario = { ...useSelector((state) => state.usuario) };
   const espaco = { ...useSelector((state) => state.espacoAtual) };
 
+  const [carregando, setCarregando] = useState(false);
   const [escolherData, setEscolherData] = useState(false);
-
   const [dataReserva, setDataReserva] = useState(null);
-
   const [passoModal, setPassoModal] = useState(1);
 
   const modalRef = useRef(null);
@@ -43,6 +46,35 @@ const DetalharEspaco = ({ props }) => {
   };
 
   const [paginaAtual, setPaginaAtual] = useState(0);
+
+  const reservaBemSucedida = () => {
+    setPassoModal(2);
+    setCarregando(false);
+  };
+
+  const reservaMalSucedida = (err) => {
+    Alert.alert(
+      'Erro na reserva',
+      'Ocorreu um erro ao reservar o espaço. Tente novamente.',
+    );
+    setCarregando(false);
+  };
+
+  const reservar = () => {
+    setCarregando(true);
+
+    const reserva = {
+      data: moment(dataReserva).format('DD/MM/YYYY'),
+      nomeEspaco: espaco.nome,
+      idEspaco: espaco.id,
+      nomeMorador: usuario.nomeCompleto,
+      idMorador: usuario.uid,
+    };
+
+    dispatch(criarReserva(reserva))
+      .then(reservaBemSucedida)
+      .catch((err) => reservaMalSucedida(err));
+  };
 
   const pagination = () => {
     return (
@@ -99,9 +131,8 @@ const DetalharEspaco = ({ props }) => {
             <View style={estilos.modalBotaoContainer}>
               <BotaoAcao
                 titulo="Confirmar reserva"
-                onPress={() => {
-                  setPassoModal(2);
-                }}
+                onPress={reservar}
+                carregando={carregando}
                 primario
               />
               <BotaoAcao titulo="Cancelar" onPress={fecharModal} />
@@ -120,7 +151,13 @@ const DetalharEspaco = ({ props }) => {
               principal.
             </Text>
             <View style={estilos.modalBotaoContainer}>
-              <BotaoAcao titulo="Fechar" onPress={fecharModal} />
+              <BotaoAcao
+                titulo="Ir para o inicio"
+                onPress={() => {
+                  fecharModal();
+                  navigation.reset({ routes: [{ name: 'NavegacaoMorador' }] });
+                }}
+              />
             </View>
           </View>
         );

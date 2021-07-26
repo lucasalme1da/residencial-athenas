@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 import {
   Dimensions,
@@ -11,10 +11,14 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 
-import { Modal, BotaoAcao } from '../../components';
+import { Modal, BotaoAcao, CartaoReserva } from '../../components';
+import { useDispatch, useSelector } from 'react-redux';
+import { deletarReserva, listarReservas } from '../../actions';
+import moment from 'moment';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
@@ -22,13 +26,19 @@ const ReservaCancelada = require('../../../assets/reserva_cancelada.png');
 const Fundo = require('../../../assets/logotipo.png');
 
 const Reservas = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const { uid } = useSelector((state) => state.usuario);
+  const reservas = useSelector((state) => state.reservas);
+
+  const [carregando, setCarregando] = useState(false);
   const [reservaAtual, setReservaAtual] = useState({
-    status: 'fonfon',
+    status: '',
   });
 
   const modalRef = useRef(null);
 
   const abrirModal = (reserva) => {
+    setReservaAtual({ status: '', ...reserva });
     modalRef.current?.open();
   };
 
@@ -36,14 +46,39 @@ const Reservas = ({ navigation }) => {
     modalRef.current?.close();
   };
 
-  const reserva = {
-    titulo: 'Chalé Olympus',
-    data: new Date(),
+  const carregarReservas = async () => {
+    setCarregando(true);
+    await dispatch(listarReservas(uid));
+    setCarregando(false);
   };
 
-  const formatarData = (data) => {
-    return '4 de Março de 2022';
+  const dataFormatada = useCallback(
+    () =>
+      moment(reservaAtual.data, 'DD/MM/YYYY').format('D [de] MMMM [de] YYYY'),
+    [reservaAtual.data],
+  );
+
+  const diasRestantes = useCallback(() => {
+    if (
+      moment(moment().format('DD/MM/YYYY'), 'DD/MM/YYYY').isSame(
+        moment(reservaAtual.data, 'DD/MM/YYYY'),
+      )
+    )
+      return 'hoje';
+    return moment(moment().format('DD/MM/YYYY'), 'DD/MM/YYYY').to(
+      moment(reservaAtual.data, 'DD/MM/YYYY'),
+    );
+  }, [reservaAtual.data]);
+
+  const cancelarReserva = () => {
+    dispatch(deletarReserva(reservaAtual.id)).then(() =>
+      setReservaAtual((state) => ({ ...state, status: 'cancelada' })),
+    );
   };
+
+  useEffect(() => {
+    carregarReservas();
+  }, []);
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">
@@ -53,75 +88,38 @@ const Reservas = ({ navigation }) => {
           <Text style={estilos.titulo}>Reservas</Text>
         </View>
         <View style={estilos.conteudo}>
-          <ScrollView style={estilos.reservasContainer}>
-            <Text style={estilos.descricao}>
-              Abaixo estão suas próximas reservas
-            </Text>
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={estilos.reserva}
-              onPress={() => abrirModal({ id: 1 })}>
-              <View style={estilos.reservaTextContainer}>
-                <Text style={estilos.reservaTitulo}>{reserva.titulo}</Text>
-                <Text style={estilos.reservaData}>
-                  Reservado por você para o dia {formatarData(reserva.data)}
+          {carregando ? (
+            <View
+              style={{
+                flex: 1,
+                paddingBottom: 50,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <ActivityIndicator size={48} color="#CAB272" />
+            </View>
+          ) : (
+            <>
+              <ScrollView style={estilos.reservasContainer}>
+                <Text style={estilos.descricao}>
+                  Abaixo estão suas próximas reservas
                 </Text>
-              </View>
-              <FontAwesome
-                style={{ marginRight: 8 }}
-                name="chevron-right"
-                size={22}
-                color="#7A6428"
+                {!carregando &&
+                  reservas.map((reserva) => (
+                    <CartaoReserva
+                      key={reserva.id}
+                      reserva={reserva}
+                      onPress={() => abrirModal(reserva)}
+                    />
+                  ))}
+              </ScrollView>
+              <BotaoAcao
+                primario={true}
+                titulo="Fazer uma nova reserva"
+                onPress={() => navigation.navigate('Inicio')}
               />
-            </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.5} style={estilos.reserva}>
-              <View style={estilos.reservaTextContainer}>
-                <Text style={estilos.reservaTitulo}>{reserva.titulo}</Text>
-                <Text style={estilos.reservaData}>
-                  Reservado por você para o dia {formatarData(reserva.data)}
-                </Text>
-              </View>
-              <FontAwesome
-                style={{ marginRight: 8 }}
-                name="chevron-right"
-                size={22}
-                color="#7A6428"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.5} style={estilos.reserva}>
-              <View style={estilos.reservaTextContainer}>
-                <Text style={estilos.reservaTitulo}>{reserva.titulo}</Text>
-                <Text style={estilos.reservaData}>
-                  Reservado por você para o dia {formatarData(reserva.data)}
-                </Text>
-              </View>
-              <FontAwesome
-                style={{ marginRight: 8 }}
-                name="chevron-right"
-                size={22}
-                color="#7A6428"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.5} style={estilos.reserva}>
-              <View style={estilos.reservaTextContainer}>
-                <Text style={estilos.reservaTitulo}>{reserva.titulo}</Text>
-                <Text style={estilos.reservaData}>
-                  Reservado por você para o dia {formatarData(reserva.data)}
-                </Text>
-              </View>
-              <FontAwesome
-                style={{ marginRight: 8 }}
-                name="chevron-right"
-                size={22}
-                color="#7A6428"
-              />
-            </TouchableOpacity>
-          </ScrollView>
-          <BotaoAcao
-            primario={true}
-            titulo="Fazer uma nova reserva"
-            onPress={() => navigation.navigate('Inicio')}
-          />
+            </>
+          )}
         </View>
         <Modal modalRef={modalRef} altura={400}>
           <View style={estilos.modal}>
@@ -139,18 +137,20 @@ const Reservas = ({ navigation }) => {
               <>
                 <View>
                   <Text style={estilos.modalTitulo}>Você reservou</Text>
-                  <Text style={estilos.modalNomeEspaco}>Chalé Olympus</Text>
+                  <Text style={estilos.modalNomeEspaco}>
+                    {reservaAtual.nomeEspaco}
+                  </Text>
                   <View style={estilos.modalDataContainer}>
                     <Text style={estilos.modalDataReserva}>
-                      para 4 de março de 2022
+                      para {dataFormatada()}
                     </Text>
                     <Text style={estilos.modalTempoRestante}>
-                      daqui dois dias
+                      {diasRestantes()}
                     </Text>
                   </View>
                 </View>
                 <View style={estilos.modalBotaoContainer}>
-                  {true ? ( // Lógica para verificar se a reserva pode ou não ser cancelada
+                  {diasRestantes() !== 'hoje' ? (
                     <>
                       <Text style={estilos.modalTextoCancelar}>
                         Gostaria de cancelar sua reserva?
@@ -168,7 +168,7 @@ const Reservas = ({ navigation }) => {
                               },
                               {
                                 text: 'Confirmar',
-                                onPress: () => {},
+                                onPress: cancelarReserva,
                                 style: 'cancel',
                               },
                             ],
@@ -245,6 +245,14 @@ const estilos = StyleSheet.create({
     color: '#7a6428',
   },
 
+  reservaTitulo: {
+    fontSize: 18,
+    fontFamily: 'Ubuntu_500Medium',
+    textAlign: 'center',
+    maxWidth: screenWidth - 70,
+    color: '#7a6428',
+  },
+
   descricao: {
     fontSize: 16,
     fontFamily: 'Ubuntu_500Medium',
@@ -257,34 +265,6 @@ const estilos = StyleSheet.create({
   reservasContainer: {
     maxHeight: screenHeight * 0.5,
     position: 'relative',
-  },
-
-  reserva: {
-    width: screenWidth - 70,
-    height: 96,
-    backgroundColor: '#F9F7F3',
-    padding: 12,
-    marginBottom: 16,
-    borderRadius: 12,
-
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-
-  reservaTextContainer: {},
-
-  reservaTitulo: {
-    fontSize: 18,
-    fontFamily: 'Ubuntu_700Bold',
-    color: '#7a6428',
-  },
-
-  reservaData: {
-    fontSize: 14,
-    fontFamily: 'Ubuntu_300Light',
-    color: '#7a6428',
-    maxWidth: (screenWidth - 70) * 0.6,
   },
 
   modal: {

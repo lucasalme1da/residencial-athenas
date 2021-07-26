@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   BackHandler,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 
 import { CartaoResumido } from '../../components/';
@@ -29,8 +30,10 @@ const Fundo = require('../../../assets/logotipo.png');
 
 const Inicio = ({ navigation }) => {
   const dispatch = useDispatch();
+  const { espacos, usuario } = useSelector((state) => state);
+
+  const [carregando, setCarregando] = useState(false);
   const [paginaAtual, setPaginaAtual] = useState(0);
-  const usuario = useSelector((state) => state.usuario);
 
   const saudacao = () => {
     const horaAtual = new Date().getHours();
@@ -42,7 +45,7 @@ const Inicio = ({ navigation }) => {
   const pagination = () => {
     return (
       <Pagination
-        dotsLength={4}
+        dotsLength={espacos.reverse().slice(0, 3).length}
         activeDotIndex={paginaAtual}
         dotStyle={estilos.paginacao}
         inactiveDotStyle={{
@@ -57,12 +60,22 @@ const Inicio = ({ navigation }) => {
     );
   };
 
+  const carregarListaDeEspacos = async () => {
+    setCarregando(true);
+    await dispatch(listarEspacos());
+    setCarregando(false);
+  };
+
+  useEffect(() => {
+    carregarListaDeEspacos();
+  }, []);
+
   return (
     <View style={estilos.fundoContainer}>
       <Image source={Fundo} style={estilos.fundoImagem} blurRadius={2} />
       <View style={estilos.tituloContainer}>
         <Text style={estilos.titulo}>
-          {saudacao()}, {usuario.nomeCompleto.split(' ')[0]}!
+          {saudacao()}, {usuario?.nomeCompleto.split(' ')[0]}!
         </Text>
         <Text style={estilos.descricao}>
           Escolha uma das opções abaixo e começe a usar o app.
@@ -82,54 +95,30 @@ const Inicio = ({ navigation }) => {
           <Text style={estilos.espacosTexto}>
             Confira os espaços recem adicionados:
           </Text>
-          <View style={estilos.carousel}>
-            <Carousel
-              data={[
-                {
-                  id: 11,
-                  imagem:
-                    'https://chaledemadeira.com/wp-content/uploads/2020/08/chal%C3%A9-por-dentro-2-1024x732.jpg',
-                  titulo: 'Chalé Olympus',
-                  descricaoBreve: 'Cozinha, 2 WCs, Sala de estar',
-                  capacidade: 30,
-                },
-                {
-                  id: 21,
-                  imagem:
-                    'https://chaledemadeira.com/wp-content/uploads/2020/08/chal%C3%A9-por-dentro-2-1024x732.jpg',
-
-                  titulo: '',
-                  descricaoBreve: '',
-                  capacidade: 30,
-                },
-                {
-                  id: 31,
-                  imagem:
-                    'https://chaledemadeira.com/wp-content/uploads/2020/08/chal%C3%A9-por-dentro-2-1024x732.jpg',
-
-                  titulo: '',
-                  descricaoBreve: '',
-                  capacidade: 30,
-                },
-                {
-                  id: 41,
-                  imagem:
-                    'https://chaledemadeira.com/wp-content/uploads/2020/08/chal%C3%A9-por-dentro-2-1024x732.jpg',
-
-                  titulo: '',
-                  descricaoBreve: '',
-                  capacidade: 30,
-                },
-              ]}
-              renderItem={({ item }) => {
-                return <CartaoResumido item={item} />;
-              }}
-              onSnapToItem={(index) => setPaginaAtual(index)}
-              sliderWidth={screenWidth}
-              itemWidth={screenWidth}
-            />
-            {pagination()}
-          </View>
+          {carregando ? (
+            <View
+              style={{
+                flex: 1,
+                height: screenHeight * 0.35,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <ActivityIndicator size={48} color="#CAB272" />
+            </View>
+          ) : (
+            <View style={estilos.carousel}>
+              <Carousel
+                data={espacos.reverse().slice(0, 3)}
+                renderItem={({ item }) => {
+                  return <CartaoResumido espaco={item} />;
+                }}
+                onSnapToItem={(index) => setPaginaAtual(index)}
+                sliderWidth={screenWidth}
+                itemWidth={screenWidth}
+              />
+              {pagination()}
+            </View>
+          )}
         </View>
       </View>
     </View>

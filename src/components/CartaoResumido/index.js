@@ -14,20 +14,20 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from 'react-native-vector-icons';
 
-const CartaoResumido = ({ item }) => {
+const CartaoResumido = ({ espaco }) => {
   return (
     <TouchableOpacity
       activeOpacity={0.7}
       onPress={(e) => console.log(e)}
       style={estilos.cartaoContainer}>
-      <Image source={{ uri: item.imagem }} style={estilos.imagem} />
+      <Image source={{ uri: espaco?.fotos[0] }} style={estilos.imagem} />
       <LinearGradient
         colors={['transparent', 'transparent', '#7A6428']}
         style={estilos.gradiente}></LinearGradient>
       <View style={estilos.conteudo}>
         <View style={estilos.tituloContainer}>
-          <Text style={estilos.titulo}>{item.titulo}</Text>
-          <Text style={estilos.descricao}>{item.descricaoBreve}</Text>
+          <Text style={estilos.titulo}>{espaco.nome}</Text>
+          <Text style={estilos.descricao}>{espaco.recursos}</Text>
         </View>
         <View style={estilos.capacidadeContainer}>
           <MaterialCommunityIcons
@@ -35,7 +35,7 @@ const CartaoResumido = ({ item }) => {
             size={24}
             color="white"
           />
-          <Text style={estilos.capacidadeTexto}>{item.capacidade}</Text>
+          <Text style={estilos.capacidadeTexto}>{espaco.capacidade}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -46,7 +46,7 @@ const estilos = StyleSheet.create({
   cartaoContainer: {
     height: 250,
     width: screenWidth - 70,
-    backgroundColor: '#7A6428',
+    backgroundColor: '#C4A962',
 
     marginLeft: 35,
     marginRight: 35,
@@ -83,6 +83,7 @@ const estilos = StyleSheet.create({
 
   tituloContainer: {
     width: (screenWidth - 70) * 0.8,
+    height: 86,
     padding: 12,
   },
 
@@ -100,6 +101,7 @@ const estilos = StyleSheet.create({
 
   capacidadeContainer: {
     width: (screenWidth - 70) * 0.2,
+    height: 86,
     padding: 12,
     alignItems: 'center',
     justifyContent: 'center',

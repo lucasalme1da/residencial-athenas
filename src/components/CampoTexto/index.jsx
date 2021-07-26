@@ -10,7 +10,7 @@ const CampoTexto = ({
   ...rest
 }) => {
   return (
-    <View style={{ flex: 1, maxHeight: 92 }}>
+    <View style={{ flex: 1 }}>
       {rotulo && <Text style={estilos.rotulo}>{rotulo}</Text>}
 
       <TextInput

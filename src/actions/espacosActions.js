@@ -33,7 +33,7 @@ export const criarEspaco = (espaco) => (dispatch) => {
     .catch((err) => console.log(err));
 };
 
-export const listarEspacos = () => (dispatch) => {
+export const listarEspacos = (quantidadeACarregar) => (dispatch) => {
   const db = firebase.database().ref('espacos');
 
   return db

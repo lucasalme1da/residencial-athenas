@@ -85,7 +85,7 @@ const InicioAdm = ({ navigation }) => {
       <Image source={Fundo} style={estilos.fundoImagem} blurRadius={2} />
       <View style={estilos.tituloContainer}>
         <Text style={estilos.titulo}>
-          {saudacao()}, {usuario.nomeCompleto.split(' ')[0]}!
+          {saudacao()}, {usuario?.nomeCompleto.split(' ')[0]}!
         </Text>
         <Text style={estilos.descricao}>
           Você é um administrador desse aplicativo. Abaixo você pode encontrar
