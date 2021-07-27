@@ -47,6 +47,11 @@ const Entrar = ({ navigation }) => {
     setLogin((state) => ({ ...state, carregando: true }));
     dispatch(fazerLogin(email, senha))
       .then((tipo) => {
+        setLogin({
+          email: '',
+          senha: '',
+          carregando: false,
+        });
         switch (tipo) {
           case 'usuario':
             navigation.reset({ routes: [{ name: 'NavegacaoMorador' }] });
@@ -58,16 +63,10 @@ const Entrar = ({ navigation }) => {
             navigation.reset({ routes: [{ name: 'Entrar' }] });
         }
       })
-      .catch((err) =>
-        Alert.alert('Erro no login', mostrarErroPeloCodigo(err.code)),
-      )
-      .then(() =>
-        setLogin((state) => ({
-          email: '',
-          senha: '',
-          carregando: false,
-        })),
-      );
+      .catch((err) => {
+        setLogin((state) => ({ ...state, carregando: false }));
+        return Alert.alert('Erro no login', mostrarErroPeloCodigo(err.code));
+      });
   };
 
   const verificarUsuarioLogado = async () => {

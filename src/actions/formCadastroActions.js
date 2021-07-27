@@ -1,5 +1,4 @@
 import firebase from 'firebase';
-import { Alert } from 'react-native';
 
 export const SET_NOVO_USUARIO = 'SET_NOVO_USUARIO';
 export const setNovoUsuario = (campo, valor) => ({
@@ -8,7 +7,12 @@ export const setNovoUsuario = (campo, valor) => ({
   valor,
 });
 
-export const fazerCadastro = (usuario) => (dispatch) => {
+export const LIMPAR_NOVO_USUARIO = 'LIMPAR_NOVO_USUARIO';
+export const limparNovoUsuario = () => ({
+  type: LIMPAR_NOVO_USUARIO,
+});
+
+export const fazerCadastro = (usuario) => () => {
   const { email, senha, nomeCompleto, predio, apartamento, avatar } = usuario;
 
   const db = firebase.database().ref('usuarios');

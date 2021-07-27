@@ -13,7 +13,7 @@ const BotaoAcao = ({
   style,
   primario = false,
   carregando = false,
-  ...rest
+  disabled,
 }) => {
   return (
     <TouchableNativeFeedback
@@ -21,11 +21,13 @@ const BotaoAcao = ({
       style={{
         ...estilos.botaoContainer,
       }}
-      onPress={onPress}>
+      onPress={onPress}
+      disabled={disabled}>
       <View
         style={{
           ...estilos.botaoContainer,
           ...style,
+          opacity: disabled ? 0.5 : 1,
           backgroundColor: primario ? '#cab272' : '#F3F1EC',
         }}>
         <View style={estilos.botaoTitulo}>

@@ -23,6 +23,7 @@ import {
 import { atualizarEspaco } from '../../actions/espacosActions';
 
 import { CampoFoto, CampoTexto, BotaoAcao } from '../../components';
+import { tipos, validar } from '../../utils/validacao';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
@@ -109,6 +110,14 @@ const EditarEspacoAdm = ({ navigation }) => {
 
   const salvarEdicao = () => {
     setCarregando(true);
+
+    const validacao = validar(espacoAtual, tipos.ESPACO);
+
+    if (!validacao.valido) {
+      setCarregando(false);
+      return Alert.alert('Erro! Confira as informações', validacao.mensagem);
+    }
+
     dispatch(atualizarEspaco(espacoAtual))
       .then(edicaoBemSucedida)
       .catch((err) => edicaoMalSucedida(err));
@@ -160,6 +169,7 @@ const EditarEspacoAdm = ({ navigation }) => {
             <CampoTexto
               placeholder={'Chale, Academia, Área de churrasco...'}
               value={espacoAtual.tipo}
+              maxLength={20}
               rotulo="Tipo do espaço"
               onChangeText={(valor) => mudaValor('tipo', valor)}
             />
@@ -168,6 +178,7 @@ const EditarEspacoAdm = ({ navigation }) => {
               placeholder={'Adicione um nome simples...'}
               value={espacoAtual.nome}
               rotulo="Nome do espaço"
+              maxLength={30}
               onChangeText={(valor) => mudaValor('nome', valor)}
             />
 
@@ -178,6 +189,7 @@ const EditarEspacoAdm = ({ navigation }) => {
               value={espacoAtual.descricao}
               rotulo="Descrição"
               style={{ height: 126, textAlignVertical: 'top', padding: 12 }}
+              maxLength={220}
               onChangeText={(valor) => mudaValor('descricao', valor)}
             />
 
@@ -195,6 +207,7 @@ const EditarEspacoAdm = ({ navigation }) => {
               placeholder={'Cozinha, Banheiro, 2 Quartos...'}
               value={espacoAtual.palavrasChave.join(',')}
               rotulo="Digite palavras-chave separadas por vírgula"
+              maxLength={40}
               onChangeText={(valor) =>
                 mudaValor('palavrasChave', valor.split(','))
               }
@@ -203,6 +216,7 @@ const EditarEspacoAdm = ({ navigation }) => {
             <CampoTexto
               placeholder={'24 horas por dia, 7 dias por semana'}
               value={espacoAtual.funcionamento}
+              maxLength={40}
               rotulo="Informe uma descrição sobre o funcionamento"
               onChangeText={(valor) => mudaValor('funcionamento', valor)}
             />
@@ -210,6 +224,7 @@ const EditarEspacoAdm = ({ navigation }) => {
             <CampoTexto
               placeholder={'30'}
               value={espacoAtual.capacidade}
+              maxLength={3}
               rotulo="Informe a capacidade de pessoas no espaço"
               onChangeText={(valor) => mudaValor('capacidade', valor)}
             />

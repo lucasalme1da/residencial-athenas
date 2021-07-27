@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -19,6 +19,7 @@ import { criarReserva } from '../../actions';
 
 import { Modal, BotaoAcao } from '../../components';
 import { useDispatch, useSelector } from 'react-redux';
+import { datasJaReservadas } from '../../actions/espacoAtualActions';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
@@ -33,6 +34,7 @@ const DetalharEspaco = ({ navigation }) => {
   const [carregando, setCarregando] = useState(false);
   const [escolherData, setEscolherData] = useState(false);
   const [dataReserva, setDataReserva] = useState(null);
+  const [datasReservadas, setDatasReservadas] = useState([]);
   const [passoModal, setPassoModal] = useState(1);
 
   const modalRef = useRef(null);
@@ -62,6 +64,20 @@ const DetalharEspaco = ({ navigation }) => {
 
   const reservar = () => {
     setCarregando(true);
+
+    let valid = true;
+
+    datasReservadas.forEach((data) => {
+      if (data === moment(dataReserva).format('DD/MM/YYYY')) valid = false;
+    });
+
+    if (!valid) {
+      setCarregando(false);
+      return Alert.alert(
+        'Data já escolhida',
+        'Este espaço já foi reservado nesta data para outro morador! Por favor, escolha uma data diferente.',
+      );
+    }
 
     const reserva = {
       data: moment(dataReserva).format('DD/MM/YYYY'),
@@ -133,6 +149,7 @@ const DetalharEspaco = ({ navigation }) => {
                 titulo="Confirmar reserva"
                 onPress={reservar}
                 carregando={carregando}
+                disabled={!dataReserva}
                 primario
               />
               <BotaoAcao titulo="Cancelar" onPress={fecharModal} />
@@ -163,6 +180,10 @@ const DetalharEspaco = ({ navigation }) => {
         );
     }
   };
+
+  useEffect(() => {
+    datasJaReservadas(espaco.id).then((datas) => setDatasReservadas(datas));
+  }, []);
 
   return (
     <View style={{ flex: 1 }} behavior="position">

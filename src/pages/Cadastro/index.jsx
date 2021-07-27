@@ -9,19 +9,23 @@ import {
   Text,
   KeyboardAvoidingView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { fazerCadastro, setNovoUsuario } from '../../actions';
+import {
+  fazerCadastro,
+  limparNovoUsuario,
+  setNovoUsuario,
+} from '../../actions';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CheckBox from '@react-native-community/checkbox';
 import * as ImagePicker from 'expo-image-picker';
 
-import CampoSenha from '../../components/CampoSenha';
-import CampoTexto from '../../components/CampoTexto';
-import BotaoAcao from '../../components/BotaoAcao';
-import Seletor from '../../components/Seletor';
+import { CampoSenha, CampoTexto, BotaoAcao, Seletor } from '../../components/';
+
+import { validar, tipos } from '../../utils/validacao';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
@@ -30,6 +34,7 @@ const Fundo = require('../../../assets/logotipo.png');
 const Cadastro = ({ navigation }) => {
   const [evitarTeclado, setEvitarTeclado] = useState(false);
   const [passo, setPasso] = useState(1);
+  const [carregando, setCarregando] = useState(false);
   const [predios, setPredios] = useState(['1', '2', '3', '4', '5']);
   const [apartamentos, setApartamentos] = useState([
     '11',
@@ -71,15 +76,35 @@ const Cadastro = ({ navigation }) => {
     }
   };
 
-  const cadastrar = () =>
-    dispatch(fazerCadastro(novoUsuario))
-      .then(() =>
-        Alert.alert(
+  const continuar = () => {
+    const validacao = validar(novoUsuario, tipos.NOVO_USUARIO_PASSO_1);
+
+    if (!validacao.valido)
+      return Alert.alert('Erro! Confira as informações', validacao.mensagem);
+
+    setPasso(2);
+  };
+
+  const cadastrar = () => {
+    setCarregando(true);
+    const validacao = validar(novoUsuario, tipos.NOVO_USUARIO_PASSO_2);
+
+    if (!validacao.valido) {
+      setCarregando(false);
+      return Alert.alert('Erro! Confira as informações', validacao.mensagem);
+    }
+
+    return dispatch(fazerCadastro(novoUsuario))
+      .then(() => {
+        dispatch(limparNovoUsuario());
+        return Alert.alert(
           'Cadastro bem-sucedido',
           'Morador do apto ' + predio + '-' + apartamento + ' cadastrado!',
-        ),
-      )
-      .catch((err) => Alert.alert('Erro no cadastro', err.message));
+        );
+      })
+      .catch((err) => Alert.alert('Erro no cadastro', err.message))
+      .then(() => setCarregando(false));
+  };
 
   useEffect(() => {
     (async () => {
@@ -158,11 +183,7 @@ const Cadastro = ({ navigation }) => {
                   onFocus={mudaTeclado}
                   onBlur={mudaTeclado}
                 />
-                <BotaoAcao
-                  primario
-                  titulo="Continuar"
-                  onPress={() => setPasso(2)}
-                />
+                <BotaoAcao primario titulo="Continuar" onPress={continuar} />
                 <BotaoAcao
                   titulo="Cancelar"
                   onPress={() => navigation.goBack()}
@@ -224,7 +245,12 @@ const Cadastro = ({ navigation }) => {
               </View>
 
               <View style={{ height: 180 }}>
-                <BotaoAcao primario titulo="Continuar" onPress={cadastrar} />
+                <BotaoAcao
+                  primario
+                  titulo="Continuar"
+                  onPress={cadastrar}
+                  carregando={carregando}
+                />
                 <BotaoAcao titulo="Voltar" onPress={() => setPasso(1)} />
               </View>
             </View>

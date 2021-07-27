@@ -23,6 +23,7 @@ import {
 import { criarEspaco } from '../../actions/espacosActions';
 
 import { CampoFoto, CampoTexto, BotaoAcao } from '../../components';
+import { tipos, validar } from '../../utils/validacao';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 const Fundo = require('../../../assets/logotipo.png');
@@ -116,6 +117,14 @@ const AdicionarEspacoAdm = ({ navigation }) => {
 
   const adicionarEspaco = () => {
     setCarregando(true);
+
+    const validacao = validar(novoEspaco, tipos.ESPACO);
+
+    if (!validacao.valido) {
+      setCarregando(false);
+      return Alert.alert('Erro! Confira as informações', validacao.mensagem);
+    }
+
     dispatch(criarEspaco(novoEspaco))
       .then(cadastroBemSucedido)
       .catch((err) => cadastroMalSucedido(err));
@@ -140,6 +149,7 @@ const AdicionarEspacoAdm = ({ navigation }) => {
                   <CampoTexto
                     placeholder={'Chale, Academia, Área de churrasco...'}
                     value={novoEspaco.tipo}
+                    maxLength={20}
                     rotulo="Tipo do espaço"
                     onChangeText={(valor) => mudaValor('tipo', valor)}
                   />
@@ -148,6 +158,7 @@ const AdicionarEspacoAdm = ({ navigation }) => {
                     placeholder={'Adicione um nome simples...'}
                     value={novoEspaco.nome}
                     rotulo="Nome do espaço"
+                    maxLength={30}
                     onChangeText={(valor) => mudaValor('nome', valor)}
                   />
 
@@ -162,6 +173,7 @@ const AdicionarEspacoAdm = ({ navigation }) => {
                       textAlignVertical: 'top',
                       padding: 12,
                     }}
+                    maxLength={220}
                     onChangeText={(valor) => mudaValor('descricao', valor)}
                   />
 
@@ -179,6 +191,7 @@ const AdicionarEspacoAdm = ({ navigation }) => {
                     placeholder={'Cozinha, Banheiro, 2 Quartos...'}
                     value={novoEspaco.palavrasChave.join(',')}
                     rotulo="Digite palavras-chave separadas por vírgula"
+                    maxLength={40}
                     onChangeText={(valor) =>
                       mudaValor('palavrasChave', valor.split(','))
                     }
@@ -187,6 +200,7 @@ const AdicionarEspacoAdm = ({ navigation }) => {
                   <CampoTexto
                     placeholder={'24 horas por dia, 7 dias por semana'}
                     value={novoEspaco.funcionamento}
+                    maxLength={40}
                     rotulo="Informe uma descrição sobre o funcionamento"
                     onChangeText={(valor) => mudaValor('funcionamento', valor)}
                   />
@@ -194,6 +208,8 @@ const AdicionarEspacoAdm = ({ navigation }) => {
                   <CampoTexto
                     placeholder={'30'}
                     value={novoEspaco.capacidade}
+                    maxLength={3}
+                    keyboardType="number-pad"
                     rotulo="Informe a capacidade de pessoas no espaço"
                     onChangeText={(valor) => mudaValor('capacidade', valor)}
                   />

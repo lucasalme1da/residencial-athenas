@@ -47,36 +47,36 @@ export const listarTodasReservas = () => (dispatch) => {
     .ref('reservas')
     .on('value', (snapshot) =>
       dispatch(
-        listarReservasAction(
-          Object.values(snapshot.val()).map((reserva, idx) => ({
-            ...reserva,
-            id: Object.keys(snapshot.val())[idx],
-          })),
-        ),
+        snapshot.val()
+          ? listarReservasAction(
+              Object.values(snapshot.val()).map((reserva, idx) => ({
+                ...reserva,
+                id: Object.keys(snapshot.val())[idx],
+              })),
+            )
+          : listarReservasAction([]),
       ),
     );
 };
 
 export const listarReservas = (idMorador) => (dispatch) => {
-  return (
-    firebase
-      .database()
-      .ref('reservas')
-      .orderByChild('idMorador')
-      // .orderByValue()
-      // .orderByKey()
-      .equalTo(idMorador)
-      .on('value', (snapshot) =>
-        dispatch(
-          listarReservasAction(
-            Object.values(snapshot.val()).map((reserva, idx) => ({
-              ...reserva,
-              id: Object.keys(snapshot.val())[idx],
-            })),
-          ),
-        ),
-      )
-  );
+  return firebase
+    .database()
+    .ref('reservas')
+    .orderByChild('idMorador')
+    .equalTo(idMorador)
+    .on('value', (snapshot) =>
+      dispatch(
+        snapshot.val()
+          ? listarReservasAction(
+              Object.values(snapshot.val()).map((reserva, idx) => ({
+                ...reserva,
+                id: Object.keys(snapshot.val())[idx],
+              })),
+            )
+          : listarReservasAction([]),
+      ),
+    );
 };
 
 export const atualizarReserva = (novosDadosDoReserva) => (dispatch) => {

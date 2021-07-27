@@ -100,19 +100,35 @@ const Reservas = ({ navigation }) => {
             </View>
           ) : (
             <>
-              <ScrollView style={estilos.reservasContainer}>
-                <Text style={estilos.descricao}>
-                  Abaixo estão suas próximas reservas
-                </Text>
-                {!carregando &&
-                  reservas.map((reserva) => (
-                    <CartaoReserva
-                      key={reserva.id}
-                      reserva={reserva}
-                      onPress={() => abrirModal(reserva)}
-                    />
-                  ))}
-              </ScrollView>
+              {reservas.length > 0 ? (
+                <>
+                  <ScrollView style={estilos.reservasContainer}>
+                    <Text style={estilos.descricao}>
+                      Abaixo estão suas próximas reservas
+                    </Text>
+                    {!carregando &&
+                      reservas.map((reserva, idx) => (
+                        <CartaoReserva
+                          key={reserva.id + idx}
+                          reserva={reserva}
+                          onPress={() => abrirModal(reserva)}
+                        />
+                      ))}
+                  </ScrollView>
+                </>
+              ) : (
+                <View
+                  style={{
+                    flex: 1,
+                    height: screenHeight * 0.6,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={estilos.descricao}>
+                    Nenhuma reserva foi realizada!
+                  </Text>
+                </View>
+              )}
               <BotaoAcao
                 primario={true}
                 titulo="Fazer uma nova reserva"

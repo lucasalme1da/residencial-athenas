@@ -52,7 +52,7 @@ const Conta = ({ navigation }) => {
           <View style={estilos.fotoContainer}>
             <TouchableOpacity style={estilos.fotoBotao} onPress={() => {}}>
               {usuario.avatar ? (
-                <Image style={estilos.foto} source={{ uri: usuario.avatar }} />
+                <Image style={estilos.foto} source={{ uri: usuario?.avatar }} />
               ) : (
                 <Text style={estilos.iniciais}>LA</Text>
               )}

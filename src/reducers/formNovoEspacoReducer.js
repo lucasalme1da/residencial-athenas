@@ -12,7 +12,7 @@ const PLACEHOLDER = {
   tipo: 'Chalé Completo',
   nome: 'Chalé Olympus',
   descricao:
-    'Um chalé aconchegante, com tudo o que você precisa para ter uma experiência diferente aqui no Athenas. Ideal para festas sociais, aniversários, reuniões de empresa ou outros eventos relacionados.',
+    'Um chalé aconchegante, com tudo o que você precisa para ter uma experiência diferente aqui no Athenas. Ideal para festas sociais, aniversários, reuniões de empresa ou outros eventos relacionados. Ideal para festas sociais.',
   capacidade: '30',
   palavrasChave: ['Chalé', 'Olympus', 'Ar-condicionado'],
   recursos:
@@ -31,7 +31,7 @@ const INITIAL_STATE = {
   funcionamento: '',
 };
 
-const formNovoEspacoReducer = (state = PLACEHOLDER, action) => {
+const formNovoEspacoReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case SET_NOVO_ESPACO:
       return { ...state, [action.campo]: action.valor };

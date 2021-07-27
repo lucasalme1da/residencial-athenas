@@ -47,21 +47,37 @@ const ReservasAdm = ({ navigation }) => {
           <Text style={estilos.titulo}>Reservas</Text>
         </View>
         <View style={estilos.conteudo}>
-          <ScrollView style={estilos.reservasContainer}>
-            <Text style={estilos.descricao}>
-              Abaixo estão todas as reservas do residencial
-            </Text>
-            {!carregando &&
-              reservas.map((reserva) => (
-                <CartaoReserva
-                  key={reserva.id}
-                  reserva={reserva}
-                  onPress={() => {}}
-                  tipo="admin"
-                  disabled
-                />
-              ))}
-          </ScrollView>
+          {reservas.length > 0 ? (
+            <>
+              <ScrollView style={estilos.reservasContainer}>
+                <Text style={estilos.descricao}>
+                  Abaixo estão todas as reservas do residencial
+                </Text>
+                {!carregando &&
+                  reservas.map((reserva) => (
+                    <CartaoReserva
+                      key={reserva.id}
+                      reserva={reserva}
+                      onPress={() => {}}
+                      tipo="admin"
+                      disabled
+                    />
+                  ))}
+              </ScrollView>
+            </>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                height: screenHeight * 0.6,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text style={estilos.descricao}>
+                Nenhuma reserva foi realizada!
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     </KeyboardAvoidingView>
