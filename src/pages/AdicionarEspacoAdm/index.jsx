@@ -55,7 +55,7 @@ const AdicionarEspacoAdm = ({ navigation }) => {
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [406, 271],
-      quality: 0.1,
+      quality: 0.8,
       base64: true,
     });
     if (!result.cancelled) {

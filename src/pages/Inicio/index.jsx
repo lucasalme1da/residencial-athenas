@@ -23,6 +23,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { listarEspacos } from '../../actions/espacosActions';
+import { selecionarEspaco } from '../../actions/espacoAtualActions';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
@@ -64,6 +65,15 @@ const Inicio = ({ navigation }) => {
     setCarregando(true);
     await dispatch(listarEspacos());
     setCarregando(false);
+  };
+
+  const verDetalhes = (e) => {
+    console.log(e);
+    dispatch(selecionarEspaco(e));
+    return navigation.navigate('DetalharEspaco', {
+      espacoId: e.id,
+      espacoNome: e.nome,
+    });
   };
 
   useEffect(() => {
@@ -110,7 +120,9 @@ const Inicio = ({ navigation }) => {
               <Carousel
                 data={espacos.reverse().slice(0, 3)}
                 renderItem={({ item }) => {
-                  return <CartaoResumido espaco={item} />;
+                  return (
+                    <CartaoResumido espaco={item} detalhar={verDetalhes} />
+                  );
                 }}
                 onSnapToItem={(index) => setPaginaAtual(index)}
                 sliderWidth={screenWidth}

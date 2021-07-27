@@ -14,11 +14,11 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from 'react-native-vector-icons';
 
-const CartaoResumido = ({ espaco }) => {
+const CartaoResumido = ({ detalhar, espaco }) => {
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-      onPress={(e) => console.log(e)}
+      onPress={() => detalhar(espaco)}
       style={estilos.cartaoContainer}>
       <Image source={{ uri: espaco?.fotos[0] }} style={estilos.imagem} />
       <LinearGradient
@@ -79,6 +79,7 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'flex-end',
+    paddingBottom: 12,
   },
 
   tituloContainer: {
@@ -88,7 +89,7 @@ const estilos = StyleSheet.create({
   },
 
   titulo: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'Ubuntu_500Medium',
     color: 'white',
     marginBottom: 4,
@@ -96,13 +97,13 @@ const estilos = StyleSheet.create({
 
   descricao: {
     fontFamily: 'Ubuntu_400Regular',
+    fontSize: 14,
     color: 'white',
   },
 
   capacidadeContainer: {
     width: (screenWidth - 70) * 0.2,
-    height: 86,
-    padding: 12,
+    height: 80,
     alignItems: 'center',
     justifyContent: 'center',
   },
