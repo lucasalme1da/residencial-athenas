@@ -19,7 +19,7 @@ import { criarReserva } from '../../actions';
 
 import { Modal, BotaoAcao } from '../../components';
 import { useDispatch, useSelector } from 'react-redux';
-import { datasJaReservadas } from '../../actions/espacoAtualActions';
+import { datasJaReservadas } from '../../utils/checarData';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
@@ -67,9 +67,10 @@ const DetalharEspaco = ({ navigation }) => {
 
     let valid = true;
 
-    datasReservadas.forEach((data) => {
-      if (data === moment(dataReserva).format('DD/MM/YYYY')) valid = false;
-    });
+    if (datasReservadas)
+      datasReservadas.forEach((data) => {
+        if (data === moment(dataReserva).format('DD/MM/YYYY')) valid = false;
+      });
 
     if (!valid) {
       setCarregando(false);
@@ -182,7 +183,13 @@ const DetalharEspaco = ({ navigation }) => {
   };
 
   useEffect(() => {
-    datasJaReservadas(espaco.id).then((datas) => setDatasReservadas(datas));
+    const listarDatas = async () => {
+      await datasJaReservadas(espaco.id).then((datas) =>
+        setDatasReservadas(datas),
+      );
+    };
+
+    listarDatas();
   }, []);
 
   return (

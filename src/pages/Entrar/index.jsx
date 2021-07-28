@@ -29,7 +29,7 @@ const Logo = require('../../../assets/logotipo-texto.png');
 const Fundo = require('../../../assets/logotipo.png');
 
 import { mudaValor } from '../../utils';
-import { mostrarErroPeloCodigo } from '../../utils/errorHandler';
+import { mostrarErroPeloCodigo } from '../../utils/lidarComErros';
 
 const Entrar = ({ navigation }) => {
   const dispatch = useDispatch();

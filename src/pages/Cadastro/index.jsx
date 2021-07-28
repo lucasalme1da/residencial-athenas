@@ -55,7 +55,6 @@ const Cadastro = ({ navigation }) => {
   const novoUsuario = useSelector((state) => state.formCadastro);
 
   const mudaTeclado = () => {
-    console.log('mudouy');
     setEvitarTeclado(!evitarTeclado);
   };
 
@@ -97,10 +96,15 @@ const Cadastro = ({ navigation }) => {
     return dispatch(fazerCadastro(novoUsuario))
       .then(() => {
         dispatch(limparNovoUsuario());
-        return Alert.alert(
+        Alert.alert(
           'Cadastro bem-sucedido',
-          'Morador do apto ' + predio + '-' + apartamento + ' cadastrado!',
+          'Morador do apto ' +
+            novoUsuario.predio +
+            '-' +
+            novoUsuario.apartamento +
+            ' cadastrado!',
         );
+        return navigation.reset({ routes: [{ name: 'Entrar' }] });
       })
       .catch((err) => Alert.alert('Erro no cadastro', err.message))
       .then(() => setCarregando(false));

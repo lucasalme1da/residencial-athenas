@@ -15,6 +15,8 @@ import {
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 
+import { useIsFocused } from '@react-navigation/native';
+
 import { Modal, BotaoAcao, CartaoReserva } from '../../components';
 import { useDispatch, useSelector } from 'react-redux';
 import { deletarReserva, listarReservas } from '../../actions';
@@ -77,8 +79,12 @@ const Reservas = ({ navigation }) => {
   };
 
   useEffect(() => {
-    carregarReservas();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      carregarReservas();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">

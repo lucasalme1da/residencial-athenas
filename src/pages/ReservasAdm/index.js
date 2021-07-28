@@ -19,7 +19,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
-const ReservaCancelada = require('../../../assets/reserva_cancelada.png');
 const Fundo = require('../../../assets/logotipo.png');
 
 const ReservasAdm = ({ navigation }) => {

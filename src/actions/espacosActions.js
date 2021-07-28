@@ -30,10 +30,10 @@ export const criarEspaco = (espaco) => (dispatch) => {
   return db
     .push(espaco)
     .then(() => dispatch(criarEspacoAction(espaco)))
-    .catch((err) => console.log(err));
+    .catch(() => {});
 };
 
-export const listarEspacos = (quantidadeACarregar) => (dispatch) => {
+export const listarEspacos = () => (dispatch) => {
   const db = firebase.database().ref('espacos');
 
   return db
@@ -50,7 +50,7 @@ export const listarEspacos = (quantidadeACarregar) => (dispatch) => {
         ),
       ),
     )
-    .catch((err) => console.log(err));
+    .catch(() => {});
 };
 
 export const atualizarEspaco = (novosDadosDoEspaco) => (dispatch) => {

@@ -10,7 +10,6 @@ import reservasReducer from './reservasReducer';
 export default combineReducers({
   formCadastro: formCadastroReducer,
   formNovoEspaco: formNovoEspacoReducer,
-  // administrador: administradorReducer,
   reservas: reservasReducer,
   espacoAtual: espacoAtualReducer,
   espacos: espacosReducer,

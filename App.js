@@ -32,7 +32,7 @@ import moment from 'moment';
 import 'moment/locale/pt-br';
 
 const App = ({ navigation }) => {
-  moment.locale('pt-BR');
+  moment.locale('pt-br');
 
   useEffect(() => {
     if (!firebase.apps.length) {

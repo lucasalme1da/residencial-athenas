@@ -68,7 +68,6 @@ const Inicio = ({ navigation }) => {
   };
 
   const verDetalhes = (e) => {
-    console.log(e);
     dispatch(selecionarEspaco(e));
     return navigation.navigate('DetalharEspaco', {
       espacoId: e.id,

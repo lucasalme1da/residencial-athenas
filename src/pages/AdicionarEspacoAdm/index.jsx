@@ -41,7 +41,6 @@ const AdicionarEspacoAdm = ({ navigation }) => {
   };
 
   const apagarFoto = (foto) => {
-    console.log(foto);
     dispatch(
       setNovoEspaco(
         'fotos',

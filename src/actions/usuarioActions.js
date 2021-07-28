@@ -33,7 +33,7 @@ export const fazerLogin = (email, senha) => (dispatch) => {
               dispatch(action);
               return usuario.tipo;
             })
-            .catch((err) => console.log(err));
+            .catch(() => {});
         }),
     );
 };

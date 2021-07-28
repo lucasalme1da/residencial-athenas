@@ -64,9 +64,7 @@ const EditarEspacoAdm = ({ navigation }) => {
           ...espacoAtual.fotos,
           'data:image/png;base64,' + result.base64,
         ]),
-      )
-        .then((r) => console.log(r))
-        .catch((err) => console.log(err));
+      );
     }
   };
 

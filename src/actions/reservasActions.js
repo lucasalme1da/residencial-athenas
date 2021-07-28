@@ -31,30 +31,26 @@ const deletarReservaAction = (reservaId) => ({
 });
 
 export const criarReserva = (reserva) => (dispatch) => {
-  console.log(reserva);
-
   const db = firebase.database().ref('reservas');
 
-  return db
-    .push(reserva)
-    .then(() => dispatch(criarReservaAction(reserva)))
-    .catch((err) => console.log(err));
+  return db.push(reserva).then(() => dispatch(criarReservaAction(reserva)));
 };
 
 export const listarTodasReservas = () => (dispatch) => {
   return firebase
     .database()
     .ref('reservas')
-    .on('value', (snapshot) =>
+    .get()
+    .then((snapshot) =>
       dispatch(
         snapshot.val()
-          ? listarReservasAction(
+          ? listarTodasReservasAction(
               Object.values(snapshot.val()).map((reserva, idx) => ({
                 ...reserva,
                 id: Object.keys(snapshot.val())[idx],
               })),
             )
-          : listarReservasAction([]),
+          : listarTodasReservasAction([]),
       ),
     );
 };
@@ -65,7 +61,8 @@ export const listarReservas = (idMorador) => (dispatch) => {
     .ref('reservas')
     .orderByChild('idMorador')
     .equalTo(idMorador)
-    .on('value', (snapshot) =>
+    .get()
+    .then((snapshot) =>
       dispatch(
         snapshot.val()
           ? listarReservasAction(
